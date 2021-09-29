@@ -1,5 +1,7 @@
 import { ThemeProvider } from '@emotion/react';
 import { createTheme, CssBaseline } from '@mui/material';
+import { Provider } from 'react-redux';
+import { store } from './redux';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './App';
@@ -33,7 +35,9 @@ ReactDOM.render(
   <React.StrictMode>
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <App />
+      <Provider store={store}>
+        <App />
+      </Provider>
     </ThemeProvider>
   </React.StrictMode>,
   document.getElementById('root')

@@ -1,4 +1,11 @@
-import { ListItem, List, Typography, Grid, Chip, Divider } from '@mui/material';
+import {
+  ListItem,
+  List,
+  Typography,
+  Grid,
+  Chip,
+  Divider,
+} from '@mui/material';
 import AppFrame from '../components/AppFrame';
 import { useHistory, useRouteMatch } from 'react-router';
 import {
@@ -7,6 +14,7 @@ import {
   FlightLand as FlightLandIcon,
 } from '@mui/icons-material';
 import { useEffect, useState } from 'react';
+import { connect, ReduxProps } from '../redux';
 
 const tabs = [
   {
@@ -64,7 +72,7 @@ interface FlightInformationArrival {
   aircraftType?: string;
 }
 
-function AirportStatusPage() {
+function AirportStatusPage(props: ReduxProps) {
   const match = useRouteMatch<{
     airportCode: string;
     direction: 'departure' | 'arrival';
@@ -267,4 +275,4 @@ function AirportStatusPage() {
   );
 }
 
-export default AirportStatusPage;
+export default connect(AirportStatusPage);
