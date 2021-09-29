@@ -19,10 +19,21 @@ import {
   Translate as TranslateIcon,
   ConfirmationNumber as TicketIcon,
 } from '@mui/icons-material';
-import { useHistory, useLocation } from 'react-router';
+import { useHistory, useLocation, useRouteMatch } from 'react-router';
 
+interface TabItem {
+  label: string;
+  path?: string;
+  match?: string;
+}
 interface Props {
   children: JSX.Element;
+  minimize?: boolean;
+  title?: string;
+  tabs?: TabItem[];
+  onChangeTab?: (index: number) => void;
+  prevIcon?: JSX.Element;
+  onPrev?: () => void;
 }
 
 const menuItems = [
@@ -30,19 +41,16 @@ const menuItems = [
     label: 'Direction',
     icon: <DirectionsIcon />,
     path: '/direction',
-    children: [],
   },
   {
     label: 'Station',
     icon: <OriginIcon />,
     path: '/station',
-    children: [],
   },
   {
     label: 'Ticket',
     icon: <TicketIcon />,
     path: '/ticket',
-    children: [],
   },
   {
     label: 'Flight',
@@ -63,12 +71,32 @@ const menuItems = [
 
 function AppFrame(props: Props) {
   const location = useLocation();
-  const [bottomNav, setBottomNav] = useState(
-    menuItems.findIndex((i) => location.pathname.startsWith(i.path))
+  const match = useRouteMatch();
+
+  let menuIndex = 0;
+  let subMenus: TabItem[] = [];
+  if (!props.minimize) {
+    menuIndex = menuItems.findIndex((i) =>
+      location.pathname.startsWith(i.path)
+    );
+    subMenus = menuItems[menuIndex].children || [];
+  } else {
+    if (props.tabs) {
+      subMenus = props.tabs;
+    }
+  }
+
+  const [bottomNav, setBottomNav] = useState<number>(menuIndex);
+  const [tab, setTab] = useState<number>(
+    subMenus.findIndex((i) =>
+      i.path
+        ? location.pathname.startsWith(i.path)
+        : i.match
+        ? match.url.includes(i.match)
+        : false
+    )
   );
-  const [tab, setTab] = useState(
-    menuItems[bottomNav].children.findIndex((i) => location.pathname === i.path)
-  );
+
   const theme = useTheme();
   const history = useHistory();
 
@@ -85,17 +113,18 @@ function AppFrame(props: Props) {
             edge='start'
             color='inherit'
             sx={{ mr: 0.5 }}
+            onClick={() => (props.onPrev ? props.onPrev() : null)}
           >
-            <MenuIcon />
+            {props.prevIcon || <MenuIcon />}
           </IconButton>
           <Typography variant='h6' component='div' sx={{ flexGrow: 1 }}>
-            Tokyo TravelKit
+            {props.title || 'Tokyo TravelKit'}
           </Typography>
           <IconButton color='inherit'>
             <TranslateIcon />
           </IconButton>
         </Toolbar>
-        {menuItems[bottomNav].children.length > 0 ? (
+        {subMenus.length > 0 ? (
           <Tabs
             value={tab}
             sx={{ width: '100%' }}
@@ -104,12 +133,18 @@ function AppFrame(props: Props) {
             TabIndicatorProps={{ style: { backgroundColor: 'white' } }}
             onChange={(e, v) => setTab(v)}
           >
-            {menuItems[bottomNav].children.map(({ label, path }, index) => (
+            {subMenus.map(({ label, path }, index) => (
               <Tab
                 label={label}
                 value={index}
                 key={label}
-                onClick={() => history.push(path)}
+                onClick={() =>
+                  path
+                    ? history.push(path)
+                    : props.onChangeTab
+                    ? props.onChangeTab(index)
+                    : null
+                }
               />
             ))}
           </Tabs>
@@ -119,17 +154,15 @@ function AppFrame(props: Props) {
         className='content'
         style={{
           height: `calc(100vh - ${
-            isMobile ? '56px' : '0px'
-          } - ${headerHeight}px - ${
-            menuItems[bottomNav].children.length > 0 ? '48px' : '0px'
-          })`,
+            isMobile && !props.minimize ? '56px' : '0px'
+          } - ${headerHeight}px - ${subMenus.length > 0 ? '48px' : '0px'})`,
           backgroundColor: '#f1f3f5',
           overflow: 'auto',
         }}
       >
         {props.children}
       </div>
-      {isMobile ? (
+      {isMobile && !props.minimize ? (
         <div
           className='bottom-nav'
           style={{ position: 'sticky', bottom: 0, width: '100vw' }}

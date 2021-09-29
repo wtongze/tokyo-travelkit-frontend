@@ -1,6 +1,6 @@
-import React from 'react';
 import { ButtonBase, ButtonBaseProps, Paper, Typography } from '@mui/material';
 import { Flight as FlightIcon } from '@mui/icons-material';
+import { useHistory } from 'react-router';
 
 interface Props {
   code: string;
@@ -8,8 +8,12 @@ interface Props {
 }
 
 function AirportCard(props: Props & ButtonBaseProps) {
+  const history = useHistory();
   return (
-    <ButtonBase {...props}>
+    <ButtonBase
+      {...props}
+      onClick={() => history.push(`/flight/status/airport/${props.code}`)}
+    >
       <Paper
         className='airport-card'
         sx={{

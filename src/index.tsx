@@ -10,6 +10,23 @@ const theme = createTheme({
     fontFamily: ['Montserrat', 'sans-serif'].join(','),
   },
   spacing: 4,
+  components: {
+    MuiToolbar: {
+      styleOverrides: {
+        root: {
+          paddingLeft: '16px',
+          paddingRight: '16px',
+        },
+      },
+    },
+    MuiButtonBase: {
+      styleOverrides: {
+        root: {
+          fontFamily: 'inherit',
+        },
+      },
+    },
+  },
 });
 
 ReactDOM.render(
