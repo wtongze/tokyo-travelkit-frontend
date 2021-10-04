@@ -165,6 +165,7 @@ function AirportStatusPage(props: ReduxProps) {
       title={'Search by Airport'}
       prevIcon={<ChevronLeftIcon />}
       onPrev={() => history.push('/flight')}
+      backgroundColor='white'
     >
       <Container
         className='airport-status-page'
@@ -251,7 +252,14 @@ function AirportStatusPage(props: ReduxProps) {
                 const flight = f as DepartureInformationItem;
                 return (
                   <div key={flight.id}>
-                    <ListItem button>
+                    <ListItem
+                      button
+                      onClick={() =>
+                        history.push(
+                          `/flight/${airportCode}/${direction}/${flight.id}`
+                        )
+                      }
+                    >
                       <Grid container alignItems='center'>
                         <Grid item xs={2}>
                           <Typography
@@ -329,7 +337,14 @@ function AirportStatusPage(props: ReduxProps) {
                 const flight = f as ArrivalInformationItem;
                 return (
                   <div key={flight.id}>
-                    <ListItem button>
+                    <ListItem
+                      button
+                      onClick={() =>
+                        history.push(
+                          `/flight/${airportCode}/${direction}/${flight.id}`
+                        )
+                      }
+                    >
                       <Grid container alignItems='center'>
                         <Grid item xs={2}>
                           <Typography

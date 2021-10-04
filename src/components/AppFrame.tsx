@@ -10,6 +10,7 @@ import {
   Tab,
   useTheme,
   useMediaQuery,
+  Button,
 } from '@mui/material';
 import {
   Menu as MenuIcon,
@@ -102,6 +103,20 @@ function AppFrame(props: Props) {
           <Typography variant='h6' component='div' sx={{ flexGrow: 1 }}>
             {props.title || 'Tokyo TravelKit'}
           </Typography>
+          {isMobile || props.hideBottomNav
+            ? undefined
+            : menuItems.map((i) => (
+                <Button
+                  key={i.path}
+                  startIcon={i.icon}
+                  color='inherit'
+                  sx={{ mr: 2, px: 4 }}
+                  onClick={() => history.push(i.path)}
+                >
+                  {i.label}
+                </Button>
+              ))}
+
           <IconButton color='inherit'>
             <TranslateIcon />
           </IconButton>
@@ -109,7 +124,7 @@ function AppFrame(props: Props) {
         {subMenus.length > 0 ? (
           <Tabs
             value={tab}
-            sx={{ width: '100%' }}
+            sx={{ width: '100%', paddingLeft: isMobile ? undefined : '48px' }}
             textColor='inherit'
             variant='scrollable'
             TabIndicatorProps={{ style: { backgroundColor: 'white' } }}
@@ -138,7 +153,9 @@ function AppFrame(props: Props) {
           height: `calc(100vh - ${
             isMobile && !props.hideBottomNav ? '56px' : '0px'
           } - ${headerHeight}px - ${subMenus.length > 0 ? '48px' : '0px'})`,
-          backgroundColor: props.backgroundColor,
+          backgroundColor: props.backgroundColor
+            ? props.backgroundColor
+            : '#f1f3f5',
           overflow: 'auto',
         }}
       >
@@ -149,10 +166,7 @@ function AppFrame(props: Props) {
           className='bottom-nav'
           style={{ position: 'sticky', bottom: 0, width: '100vw' }}
         >
-          <BottomNavigation
-            showLabels
-            value={menuIndex}
-          >
+          <BottomNavigation showLabels value={menuIndex}>
             {menuItems.map((i) => (
               <BottomNavigationAction
                 label={i.label}
