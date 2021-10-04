@@ -19,7 +19,7 @@ import {
   Translate as TranslateIcon,
   ConfirmationNumber as TicketIcon,
 } from '@mui/icons-material';
-import { useHistory, useLocation, useRouteMatch } from 'react-router';
+import { useHistory, useLocation } from 'react-router';
 
 interface TabItem {
   label: string;
@@ -28,11 +28,12 @@ interface TabItem {
 }
 interface Props {
   children: JSX.Element;
-  minimize?: boolean;
+  hideBottomNav?: boolean;
   title?: string;
   tabs?: TabItem[];
-  onChangeTab?: (index: number) => void;
   prevIcon?: JSX.Element;
+  backgroundColor?: string;
+  onChangeTab?: (index: number) => void;
   onPrev?: () => void;
 }
 
@@ -56,46 +57,27 @@ const menuItems = [
     label: 'Flight',
     icon: <FlightIcon />,
     path: '/flight',
-    children: [
-      {
-        label: 'Status',
-        path: '/flight/status',
-      },
-      {
-        label: 'Schedule',
-        path: '/flight/schedule',
-      },
-    ],
   },
 ];
 
 function AppFrame(props: Props) {
   const location = useLocation();
-  const match = useRouteMatch();
 
-  let menuIndex = 0;
-  let subMenus: TabItem[] = [];
-  if (!props.minimize) {
-    menuIndex = menuItems.findIndex((i) =>
-      location.pathname.startsWith(i.path)
-    );
-    subMenus = menuItems[menuIndex].children || [];
-  } else {
-    if (props.tabs) {
-      subMenus = props.tabs;
-    }
-  }
+  const menuIndex =
+    menuItems.findIndex((i) => location.pathname.startsWith(i.path)) || 0;
 
-  const [bottomNav, setBottomNav] = useState<number>(menuIndex);
-  const [tab, setTab] = useState<number>(
-    subMenus.findIndex((i) =>
-      i.path
-        ? location.pathname.startsWith(i.path)
-        : i.match
-        ? match.url.includes(i.match)
-        : false
-    )
-  );
+  const subMenus: TabItem[] = props.tabs || [];
+  const tabIndex =
+    subMenus.findIndex((i) => {
+      if (i.path) {
+        return location.pathname.startsWith(i.path);
+      } else if (i.match) {
+        return location.pathname.includes(i.match);
+      } else {
+        return false;
+      }
+    }) || 0;
+  const [tab, setTab] = useState<number>(tabIndex);
 
   const theme = useTheme();
   const history = useHistory();
@@ -154,25 +136,22 @@ function AppFrame(props: Props) {
         className='content'
         style={{
           height: `calc(100vh - ${
-            isMobile && !props.minimize ? '56px' : '0px'
+            isMobile && !props.hideBottomNav ? '56px' : '0px'
           } - ${headerHeight}px - ${subMenus.length > 0 ? '48px' : '0px'})`,
-          backgroundColor: '#f1f3f5',
+          backgroundColor: props.backgroundColor,
           overflow: 'auto',
         }}
       >
         {props.children}
       </div>
-      {isMobile && !props.minimize ? (
+      {isMobile && !props.hideBottomNav ? (
         <div
           className='bottom-nav'
           style={{ position: 'sticky', bottom: 0, width: '100vw' }}
         >
           <BottomNavigation
             showLabels
-            value={bottomNav}
-            onChange={(e, v) => {
-              setBottomNav(v);
-            }}
+            value={menuIndex}
           >
             {menuItems.map((i) => (
               <BottomNavigationAction

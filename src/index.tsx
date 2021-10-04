@@ -1,5 +1,5 @@
 import { ThemeProvider } from '@emotion/react';
-import { createTheme, CssBaseline } from '@mui/material';
+import { createTheme, CssBaseline, colors } from '@mui/material';
 import { Provider } from 'react-redux';
 import { store } from './redux';
 import React from 'react';
@@ -27,6 +27,11 @@ const theme = createTheme({
           fontFamily: 'inherit',
         },
       },
+    },
+  },
+  palette: {
+    success: {
+      main: colors.green[500],
     },
   },
 });

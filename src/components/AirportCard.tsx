@@ -12,7 +12,7 @@ function AirportCard(props: Props & ButtonBaseProps) {
   return (
     <ButtonBase
       {...props}
-      onClick={() => history.push(`/flight/status/airport/${props.code}`)}
+      onClick={() => history.push(`/flight/${props.code}/departure`)}
     >
       <Paper
         className='airport-card'

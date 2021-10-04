@@ -5,6 +5,13 @@ import {
   Grid,
   Chip,
   Divider,
+  MenuItem,
+  Select,
+  SelectChangeEvent,
+  LinearProgress,
+  Container,
+  useMediaQuery,
+  useTheme,
 } from '@mui/material';
 import AppFrame from '../components/AppFrame';
 import { useHistory, useRouteMatch } from 'react-router';
@@ -15,6 +22,7 @@ import {
 } from '@mui/icons-material';
 import { useEffect, useState } from 'react';
 import { connect, ReduxProps } from '../redux';
+import { API } from '../api';
 
 const tabs = [
   {
@@ -32,43 +40,55 @@ interface AirportInfo {
   value: string;
 }
 
-interface FlightInformationDeparture {
+interface Info {
   id: string;
-  operator: string;
-  airline?: string;
+  title: {
+    en?: string;
+    ja?: string;
+  } | null;
+}
+
+interface DepartureInformationItem {
+  dcDate: string;
+  dctValid?: string;
+  id: string;
+  operator: Info;
+  airline?: Info;
   flightNumber: string[];
-  flightStatus?: string;
+  flightStatus?: Info;
   flightInformationSummary?: object;
   flightInformationText?: object;
   scheduledDepartureTime?: string;
   estimatedDepartureTime?: string;
   actualDepartureTime?: string;
-  departureAirport: AirportInfo;
-  departureAirportTerminal?: string;
+  departureAirport: Info;
+  departureAirportTerminal?: Info;
   departureGate?: string;
   checkInCounter?: string[];
-  destinationAirport?: AirportInfo;
-  viaAirport?: AirportInfo[];
+  destinationAirport?: Info;
+  viaAirport?: Info[];
   aircraftType?: string;
 }
 
-interface FlightInformationArrival {
+interface ArrivalInformationItem {
+  dcDate: string;
+  dctValid?: string;
   id: string;
-  operator: string;
-  airline?: string;
+  operator: Info;
+  airline?: Info;
   flightNumber: string[];
-  flightStatus?: string;
+  flightStatus?: Info;
   flightInformationSummary?: object;
   flightInformationText?: object;
   scheduledArrivalTime?: string;
   estimatedArrivalTime?: string;
   actualArrivalTime?: string;
-  arrivalAirport: AirportInfo;
-  arrivalAirportTerminal?: string;
+  arrivalAirport: Info;
+  arrivalAirportTerminal?: Info;
   arrivalGate?: string;
-  baggageClaim?: string;
-  originAirport?: AirportInfo;
-  viaAirport?: AirportInfo[];
+  baggageClaim?: string[];
+  originAirport?: Info;
+  viaAirport?: Info[];
   aircraftType?: string;
 }
 
@@ -78,102 +98,128 @@ function AirportStatusPage(props: ReduxProps) {
     direction: 'departure' | 'arrival';
   }>();
   const history = useHistory();
-  const { airportCode, direction } = match.params;
 
-  const [airportInfo, setAirportInfo] = useState({ label: '', value: '' });
+  const [airportCode] = useState(match.params.airportCode);
+  const [direction, setDirection] = useState<string>(match.params.direction);
+  const airportInfo: AirportInfo =
+    airportCode === 'NRT'
+      ? {
+          label: 'Narita',
+          value: 'NRT',
+        }
+      : {
+          label: 'Tokyo Haneda',
+          value: 'HND',
+        };
   const [flights, setFlights] = useState<
-    (FlightInformationDeparture | FlightInformationArrival)[]
+    (DepartureInformationItem | ArrivalInformationItem)[]
   >([]);
+
+  const [terminal, setTerminal] = useState(airportCode === 'HND' ? '3' : '1');
+
+  const handleChange = (event: SelectChangeEvent) => {
+    setFlights([]);
+    setLoading(true);
+    setTerminal(event.target.value);
+  };
+
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     let subscribe = true;
-    setTimeout(() => {
-      const airportInfo = {
-        label: 'Narita',
-        value: 'NRT',
-      };
-      const arrivalFlights = [
-        {
-          id: 'odpt.FlightInformationArrival:HND-TIAT.HND.HA863',
-          airline: 'Hawaiian Airlines',
-          operator: 'Tokyo International Air Terminal',
-          flightNumber: ['HA863', 'JL6415'],
-          flightStatus: 'Cancelled',
-          originAirport: {
-            label: 'Honolulu',
-            value: 'HNL',
-          },
-          arrivalAirport: {
-            label: 'Tokyo Haneda',
-            value: 'HND',
-          },
-          scheduledArrivalTime: '17:10',
-          arrivalAirportTerminal: 'Terminal 3',
-        },
-      ];
-      const departureFlights = [
-        {
-          id: 'odpt.FlightInformationDeparture:HND-TIAT.HND.MU576',
-          airline: 'China Eastern Airlines',
-          operator: 'Tokyo International Air Terminal',
-          aircratfType: '359',
-          flightNumber: ['MU576', 'JL5791'],
-          flightStatus: 'Cancelled',
-          checkInCounter: ['L', 'K', 'M'],
-          departureAirport: {
-            label: 'Tokyo Haneda',
-            value: 'HND',
-          },
-          destinationAirport: {
-            label: 'Shanghai Pudong',
-            value: 'PVG',
-          },
-          scheduledDepartureTime: '08:40',
-          departureAirportTerminal: 'Terminal 3',
-        },
-      ];
-      if (subscribe) {
-        setAirportInfo(airportInfo);
-        setFlights(
-          direction === 'departure' ? departureFlights : arrivalFlights
-        );
-      }
-    }, 500);
+
+    if (direction === 'departure') {
+      API.getDepartureInformation(airportCode, terminal).then((data) => {
+        if (subscribe) {
+          setFlights(data);
+          setLoading(false);
+        }
+      });
+    } else {
+      API.getArrivalInformation(airportCode, terminal).then((data) => {
+        if (subscribe) {
+          setFlights(data);
+          setLoading(false);
+        }
+      });
+    }
+
     return () => {
       subscribe = false;
     };
-  }, [direction]);
+  }, [airportCode, direction, terminal]);
+
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   return (
     <AppFrame
-      minimize
+      hideBottomNav
       tabs={tabs}
       onChangeTab={(index) => {
+        history.push('/flight/' + airportCode + '/' + tabs[index].match);
         setFlights([]);
-        history.push(tabs[index].match.replace(':airportCode', airportCode));
+        setLoading(true);
+        setDirection(tabs[index].match);
       }}
-      title={'Airport Status'}
+      title={'Search by Airport'}
       prevIcon={<ChevronLeftIcon />}
-      onPrev={() => history.push('/flight/status')}
+      onPrev={() => history.push('/flight')}
     >
-      <div style={{ padding: '16px' }}>
-        <Typography variant='h6' fontWeight='regular'>
-          {airportInfo.label} ({airportInfo.value})
-        </Typography>
-        <Typography
-          alignItems='center'
-          display='flex'
-          variant='h5'
-          fontWeight='medium'
+      <Container
+        className='airport-status-page'
+        sx={{
+          px: 0,
+          mt: isMobile ? 0 : 4,
+        }}
+      >
+        <div
+          style={{
+            padding: '16px',
+            backgroundColor: '#f1f3f5',
+            borderRadius: isMobile ? undefined : '8px',
+          }}
         >
-          {direction === 'departure' ? (
-            <FlightTakeoffIcon sx={{ mr: 1 }} />
-          ) : (
-            <FlightLandIcon sx={{ mr: 1 }} />
-          )}
-          {direction === 'departure' ? 'Departure' : 'Arrival'}
-        </Typography>
-        <List sx={{ mt: 2, mx: -4 }}>
+          <Grid container alignItems='center' justifyContent='space-between'>
+            <Grid item>
+              <Typography variant='h6' fontWeight='regular'>
+                {airportInfo.label} ({airportInfo.value})
+              </Typography>
+              <Typography
+                alignItems='center'
+                display='flex'
+                variant='h5'
+                fontWeight='medium'
+              >
+                {direction === 'departure' ? (
+                  <FlightTakeoffIcon sx={{ mr: 1 }} />
+                ) : (
+                  <FlightLandIcon sx={{ mr: 1 }} />
+                )}
+                {direction === 'departure' ? 'Departure' : 'Arrival'}
+              </Typography>
+            </Grid>
+            <Grid item>
+              <Select
+                value={terminal}
+                onChange={handleChange}
+                sx={{
+                  backgroundColor: '#ffffff',
+                  fontFamily: 'inherit',
+                  '& .MuiSelect-select': {
+                    paddingTop: '8px',
+                    paddingBlock: '8px',
+                  },
+                }}
+              >
+                <MenuItem value={'1'}>Terminal 1</MenuItem>
+                <MenuItem value={'2'}>Terminal 2</MenuItem>
+                <MenuItem value={'3'}>Terminal 3</MenuItem>
+              </Select>
+            </Grid>
+          </Grid>
+        </div>
+        <List sx={{ pt: 1 }}>
           <ListItem>
             <Grid container alignItems='center'>
               <Grid item xs={2}>
@@ -199,9 +245,10 @@ function AirportStatusPage(props: ReduxProps) {
             </Grid>
           </ListItem>
           <Divider />
+          {loading ? <LinearProgress /> : null}
           {direction === 'departure'
             ? flights.map((f) => {
-                const flight = f as FlightInformationDeparture;
+                const flight = f as DepartureInformationItem;
                 return (
                   <div key={flight.id}>
                     <ListItem button>
@@ -224,7 +271,7 @@ function AirportStatusPage(props: ReduxProps) {
                             fontWeight='medium'
                             lineHeight={1.25}
                           >
-                            {flight.destinationAirport?.label}
+                            {flight.destinationAirport?.title?.en}
                           </Typography>
                         </Grid>
                         <Grid item xs={3}>
@@ -244,22 +291,32 @@ function AirportStatusPage(props: ReduxProps) {
                             fontWeight='medium'
                             lineHeight={1.25}
                           >
-                            <Chip
-                              color={(() => {
-                                switch (flight.flightStatus) {
-                                  case 'Cancelled':
-                                    return 'error';
-                                  default:
-                                    return undefined;
-                                }
-                              })()}
-                              label={flight.flightStatus}
-                              size='small'
-                              sx={{
-                                borderRadius: '6px',
-                                fontWeight: 'medium',
-                              }}
-                            />
+                            {flight.flightStatus ? (
+                              <Chip
+                                color={(() => {
+                                  switch (flight.flightStatus.id) {
+                                    case 'odpt.FlightStatus:Cancelled':
+                                      return 'error';
+                                    case 'odpt.FlightStatus:OnTime':
+                                      return 'success';
+                                    case 'odpt.FlightStatus:Departed':
+                                      return 'info';
+                                    default:
+                                      return undefined;
+                                  }
+                                })()}
+                                label={flight.flightStatus.title?.en}
+                                size='small'
+                                sx={{
+                                  borderRadius: '6px',
+                                  fontWeight: 'medium',
+                                  width: '82px',
+                                  color: 'white',
+                                }}
+                              />
+                            ) : (
+                              '-'
+                            )}
                           </Typography>
                         </Grid>
                       </Grid>
@@ -268,9 +325,86 @@ function AirportStatusPage(props: ReduxProps) {
                   </div>
                 );
               })
-            : null}
+            : flights.map((f) => {
+                const flight = f as ArrivalInformationItem;
+                return (
+                  <div key={flight.id}>
+                    <ListItem button>
+                      <Grid container alignItems='center'>
+                        <Grid item xs={2}>
+                          <Typography
+                            variant='subtitle1'
+                            textAlign='center'
+                            fontWeight='medium'
+                            fontSize={20}
+                            lineHeight={1.25}
+                          >
+                            {flight.scheduledArrivalTime}
+                          </Typography>
+                        </Grid>
+                        <Grid item xs={4}>
+                          <Typography
+                            variant='subtitle1'
+                            textAlign='center'
+                            fontWeight='medium'
+                            lineHeight={1.25}
+                          >
+                            {flight.originAirport?.title?.en}
+                          </Typography>
+                        </Grid>
+                        <Grid item xs={3}>
+                          <Typography
+                            variant='subtitle1'
+                            textAlign='center'
+                            fontWeight='medium'
+                            lineHeight={1.25}
+                          >
+                            {flight.flightNumber.join('\n')}
+                          </Typography>
+                        </Grid>
+                        <Grid item xs={3}>
+                          <Typography
+                            variant='subtitle1'
+                            textAlign='center'
+                            fontWeight='medium'
+                            lineHeight={1.25}
+                          >
+                            {flight.flightStatus ? (
+                              <Chip
+                                color={(() => {
+                                  switch (flight.flightStatus.id) {
+                                    case 'odpt.FlightStatus:Cancelled':
+                                      return 'error';
+                                    case 'odpt.FlightStatus:OnTime':
+                                      return 'success';
+                                    case 'odpt.FlightStatus:Departed':
+                                      return 'info';
+                                    default:
+                                      return undefined;
+                                  }
+                                })()}
+                                label={flight.flightStatus.title?.en}
+                                size='small'
+                                sx={{
+                                  borderRadius: '6px',
+                                  fontWeight: 'medium',
+                                  width: '82px',
+                                  color: 'white',
+                                }}
+                              />
+                            ) : (
+                              '-'
+                            )}
+                          </Typography>
+                        </Grid>
+                      </Grid>
+                    </ListItem>
+                    <Divider />
+                  </div>
+                );
+              })}
         </List>
-      </div>
+      </Container>
     </AppFrame>
   );
 }
