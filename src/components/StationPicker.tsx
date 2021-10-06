@@ -3,20 +3,28 @@ import {
   ButtonBase,
   Dialog,
   Divider,
+  Grid,
   IconButton,
+  InputAdornment,
   List,
   ListItem,
-  ListItemText,
   Slide,
+  TextField,
   Toolbar,
   Typography,
   useMediaQuery,
   useTheme,
 } from '@mui/material';
 import { TransitionProps } from '@mui/material/transitions';
-import { Close as CloseIcon } from '@mui/icons-material';
-import React from 'react';
-import { connect } from '../redux';
+import {
+  Close as CloseIcon,
+  FilterList as FilterListIcon,
+  Train as TrainIcon,
+} from '@mui/icons-material';
+import React, { useState } from 'react';
+import Fuse from 'fuse.js';
+import { connect, ReduxProps } from '../redux';
+import { API } from '../api';
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {
@@ -31,13 +39,23 @@ interface Props {
   title: string;
 }
 
-function StationPicker(props: Props) {
+function StationPicker(props: Props & ReduxProps) {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
+  const [filter, setFilter] = useState('');
+  const fuse = new Fuse(props.stations, {
+    keys: ['stationCode', 'title.en', 'title.aaa'],
+  });
+
+  const list =
+    filter === '' ? props.stations : fuse.search(filter).map((i) => i.item);
+
   const [open, setOpen] = React.useState(false);
+  const [limit, setLimit] = useState(50);
 
   const handleClickOpen = () => {
+    setLimit(50);
     setOpen(true);
   };
 
@@ -81,17 +99,87 @@ function StationPicker(props: Props) {
             </Typography>
           </Toolbar>
         </AppBar>
+        <TextField
+          variant='outlined'
+          size='small'
+          sx={{
+            px: 4,
+            mt: 4,
+            '& .MuiOutlinedInput-root': {
+              fontFamily: 'inherit',
+            },
+          }}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position='start'>
+                <FilterListIcon />
+              </InputAdornment>
+            ),
+          }}
+          autoFocus
+          value={filter}
+          onChange={(e) => {
+            setFilter(e.target.value);
+          }}
+          placeholder={'Station Code / Name'}
+        ></TextField>
         <List>
-          <ListItem button>
-            <ListItemText primary='Phone ringtone' secondary='Titania' />
-          </ListItem>
-          <Divider />
-          <ListItem button>
-            <ListItemText
-              primary='Default notification ringtone'
-              secondary='Tethys'
-            />
-          </ListItem>
+          {list.slice(0, limit).map((station, index) => (
+            <div key={station.id}>
+              <ListItem button>
+                <Grid container alignItems='center'>
+                  <Grid item xs={2} textAlign='center'>
+                    {station.hasStationIcon ? (
+                      <img
+                        src={API.getStationIconPath(station.id)}
+                        alt={station.stationCode}
+                        height={50}
+                        style={{ display: 'block', margin: '0 auto' }}
+                        loading={'lazy'}
+                      />
+                    ) : station.stationCode ? (
+                      <Typography
+                        fontWeight={'bold'}
+                        fontSize={20}
+                        letterSpacing={1}
+                      >
+                        {station.stationCode}
+                      </Typography>
+                    ) : (
+                      <TrainIcon
+                        sx={{ verticalAlign: 'middle', fontSize: '1.75rem' }}
+                      />
+                    )}
+                  </Grid>
+                  <Grid item xs={10} sx={{ px: 4 }}>
+                    <Typography fontWeight={'medium'} fontSize={20}>
+                      {station.title?.en}
+                    </Typography>
+                    <Typography fontSize={14} sx={{ mt: -1 }}>
+                      {station.operatorTitle?.en} - {station.railwayTitle?.en}
+                    </Typography>
+                  </Grid>
+                </Grid>
+              </ListItem>
+              <Divider />
+              {index === list.length - 1 || index === limit - 1 ? (
+                <ListItem
+                  button
+                  onClick={() => {
+                    setLimit(limit + 50);
+                  }}
+                >
+                  <Typography
+                    textAlign='center'
+                    fontSize='20'
+                    sx={{ width: '100%' }}
+                  >
+                    Load More...
+                  </Typography>
+                </ListItem>
+              ) : null}
+            </div>
+          ))}
         </List>
       </Dialog>
     </div>

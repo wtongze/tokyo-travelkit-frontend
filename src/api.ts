@@ -83,10 +83,15 @@ async function getStations(): Promise<any[] | undefined> {
   }
 }
 
+function getStationIconPath(id: string): string {
+  return `${endpoint}/station/icon/${id}`;
+}
+
 export const API = {
   getDepartureInformation,
   getDepartureFlightInformation,
   getArrivalInformation,
   getArrivalFlightInformation,
   getStations,
+  getStationIconPath,
 };

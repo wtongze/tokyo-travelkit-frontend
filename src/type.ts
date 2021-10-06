@@ -1,9 +1,6 @@
 export interface Info {
   id: string;
-  title: {
-    en?: string;
-    ja?: string;
-  } | null;
+  title: MultiLangObject | null;
 }
 
 export interface DepartureInformationItem {
@@ -48,4 +45,22 @@ export interface ArrivalInformationItem {
   originAirport?: Info;
   viaAirport?: Info[];
   aircraftType?: string;
+}
+
+export interface MultiLangObject {
+  ja?: string;
+  en?: string;
+  ko?: string;
+  'ja-Hrkt'?: string;
+  'zh-Hans'?: string;
+  'zh-Hant'?: string;
+}
+
+export interface StationItem {
+  id: string;
+  stationCode?: string;
+  title?: MultiLangObject;
+  railwayTitle?: MultiLangObject;
+  operatorTitle?: MultiLangObject;
+  hasStationIcon?: boolean;
 }

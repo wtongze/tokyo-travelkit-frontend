@@ -1,10 +1,11 @@
 import { connect as connectRaw } from 'react-redux';
 import { createStore, Reducer } from 'redux';
+import { StationItem } from './type';
 
 interface State {
   primaryLang: string;
   secondaryLang: string;
-  stations: any[];
+  stations: StationItem[];
 }
 
 interface Action {
@@ -72,5 +73,5 @@ export interface ReduxProps {
   setStations: (stations: any[]) => void;
   primaryLang: string;
   secondaryLang: string;
-  stations: any[];
+  stations: StationItem[];
 }
