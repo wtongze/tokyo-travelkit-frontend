@@ -10,7 +10,7 @@ interface State {
 
 type Props = RouteComponentProps;
 
-class FlightStatusPage extends React.Component<Props, State> {
+class FlightTabPage extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -45,4 +45,4 @@ class FlightStatusPage extends React.Component<Props, State> {
   }
 }
 
-export default withRouter(FlightStatusPage);
+export default withRouter(FlightTabPage);
