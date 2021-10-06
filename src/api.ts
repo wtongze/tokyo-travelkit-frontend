@@ -74,9 +74,19 @@ async function getArrivalFlightInformation(
   }
 }
 
+async function getStations(): Promise<any[] | undefined> {
+  const response = await axios.get<any[]>(`${endpoint}/common/stations`);
+  if (response.status === 200) {
+    return response.data;
+  } else {
+    return undefined;
+  }
+}
+
 export const API = {
   getDepartureInformation,
   getDepartureFlightInformation,
   getArrivalInformation,
   getArrivalFlightInformation,
+  getStations,
 };

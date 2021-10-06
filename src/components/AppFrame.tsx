@@ -61,13 +61,30 @@ const menuItems = [
   },
 ];
 
+const getDefaultTabs = (path: string): TabItem[] => {
+  if (path.includes('/ticket')) {
+    return [
+      {
+        label: 'Calculator',
+        path: '/ticket/calculator',
+      },
+      {
+        label: 'Travel Pass',
+        path: '/ticket/travel-pass',
+      },
+    ];
+  } else {
+    return [];
+  }
+};
+
 function AppFrame(props: Props) {
   const location = useLocation();
 
   const menuIndex =
     menuItems.findIndex((i) => location.pathname.startsWith(i.path)) || 0;
 
-  const subMenus: TabItem[] = props.tabs || [];
+  const subMenus: TabItem[] = props.tabs || getDefaultTabs(location.pathname);
   const tabIndex =
     subMenus.findIndex((i) => {
       if (i.path) {

@@ -1,33 +1,40 @@
 import { connect as connectRaw } from 'react-redux';
-import { createStore, AnyAction, Reducer } from 'redux';
+import { createStore, Reducer } from 'redux';
 
 interface State {
   primaryLang: string;
   secondaryLang: string;
+  stations: any[];
 }
 
 interface Action {
   type: string;
-  lang: string;
+  payload: any;
 }
 
 const langReducer: Reducer<State, Action> = function (
   state = {
     primaryLang: 'en-US',
     secondaryLang: 'en',
+    stations: [],
   },
-  action: AnyAction
+  action: Action
 ) {
   switch (action.type) {
     case 'SET_PRIMARY':
       return {
         ...state,
-        primaryLang: action.lang,
+        primaryLang: action.payload,
       };
     case 'SET_SECONDARY':
       return {
         ...state,
-        secondaryLang: action.lang,
+        secondaryLang: action.payload,
+      };
+    case 'SET_STATIONS':
+      return {
+        ...state,
+        stations: [...action.payload],
       };
     default:
       return state;
@@ -46,17 +53,15 @@ const mapStateToProps = (state: State) => {
   };
 };
 
-const mapDispatchToProps = (
-  dispatch: (arg: {
-    type: 'SET_PRIMARY' | 'SET_SECONDARY';
-    lang: string;
-  }) => void
-) => {
+const mapDispatchToProps = (dispatch: (arg: Action) => void) => {
   return {
     setPrimaryLang: (newLang: string) =>
-      dispatch({ type: 'SET_PRIMARY', lang: newLang }),
+      dispatch({ type: 'SET_PRIMARY', payload: newLang }),
     setSecondaryLang: (newLang: string) =>
-      dispatch({ type: 'SET_SECONDARY', lang: newLang }),
+      dispatch({ type: 'SET_SECONDARY', payload: newLang }),
+    setStations: (stations: any[]) => {
+      dispatch({ type: 'SET_STATIONS', payload: stations });
+    },
   };
 };
 
@@ -64,6 +69,8 @@ export const connect = connectRaw(mapStateToProps, mapDispatchToProps);
 export interface ReduxProps {
   setPrimaryLang: (newLang: string) => void;
   setSecondaryLang: (newLang: string) => void;
+  setStations: (stations: any[]) => void;
   primaryLang: string;
   secondaryLang: string;
+  stations: any[];
 }
