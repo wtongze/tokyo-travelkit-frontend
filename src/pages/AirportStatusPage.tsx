@@ -23,6 +23,8 @@ import {
 import { useEffect, useState } from 'react';
 import { connect, ReduxProps } from '../redux';
 import { API } from '../api';
+import { DepartureInformationItem, ArrivalInformationItem } from '../type';
+import { AIRPORT_INFO } from '../const';
 
 const tabs = [
   {
@@ -35,62 +37,6 @@ const tabs = [
   },
 ];
 
-interface AirportInfo {
-  label: string;
-  value: string;
-}
-
-interface Info {
-  id: string;
-  title: {
-    en?: string;
-    ja?: string;
-  } | null;
-}
-
-interface DepartureInformationItem {
-  dcDate: string;
-  dctValid?: string;
-  id: string;
-  operator: Info;
-  airline?: Info;
-  flightNumber: string[];
-  flightStatus?: Info;
-  flightInformationSummary?: object;
-  flightInformationText?: object;
-  scheduledDepartureTime?: string;
-  estimatedDepartureTime?: string;
-  actualDepartureTime?: string;
-  departureAirport: Info;
-  departureAirportTerminal?: Info;
-  departureGate?: string;
-  checkInCounter?: string[];
-  destinationAirport?: Info;
-  viaAirport?: Info[];
-  aircraftType?: string;
-}
-
-interface ArrivalInformationItem {
-  dcDate: string;
-  dctValid?: string;
-  id: string;
-  operator: Info;
-  airline?: Info;
-  flightNumber: string[];
-  flightStatus?: Info;
-  flightInformationSummary?: object;
-  flightInformationText?: object;
-  scheduledArrivalTime?: string;
-  estimatedArrivalTime?: string;
-  actualArrivalTime?: string;
-  arrivalAirport: Info;
-  arrivalAirportTerminal?: Info;
-  arrivalGate?: string;
-  baggageClaim?: string[];
-  originAirport?: Info;
-  viaAirport?: Info[];
-  aircraftType?: string;
-}
 
 function AirportStatusPage(props: ReduxProps) {
   const match = useRouteMatch<{
@@ -101,16 +47,7 @@ function AirportStatusPage(props: ReduxProps) {
 
   const [airportCode] = useState(match.params.airportCode);
   const [direction, setDirection] = useState<string>(match.params.direction);
-  const airportInfo: AirportInfo =
-    airportCode === 'NRT'
-      ? {
-          label: 'Narita',
-          value: 'NRT',
-        }
-      : {
-          label: 'Tokyo Haneda',
-          value: 'HND',
-        };
+  const airportInfo = AIRPORT_INFO[airportCode];
   const [flights, setFlights] = useState<
     (DepartureInformationItem | ArrivalInformationItem)[]
   >([]);
