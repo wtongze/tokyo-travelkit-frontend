@@ -60,7 +60,9 @@ export interface StationItem {
   id: string;
   stationCode?: string;
   title?: MultiLangObject;
+  railway: string;
   railwayTitle?: MultiLangObject;
+  operator: string;
   operatorTitle?: MultiLangObject;
   hasStationIcon?: boolean;
 }

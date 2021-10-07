@@ -25,6 +25,7 @@ import React, { useState } from 'react';
 import Fuse from 'fuse.js';
 import { connect, ReduxProps } from '../redux';
 import { API } from '../api';
+import { StationItem } from '../type';
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {
@@ -37,6 +38,10 @@ const Transition = React.forwardRef(function Transition(
 
 interface Props {
   title: string;
+  operator?: string[];
+  disable?: boolean;
+  value?: StationItem;
+  onChange?: (station: StationItem) => void;
 }
 
 function StationPicker(props: Props & ReduxProps) {
@@ -44,19 +49,29 @@ function StationPicker(props: Props & ReduxProps) {
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
   const [filter, setFilter] = useState('');
-  const fuse = new Fuse(props.stations, {
-    keys: ['stationCode', 'title.en', 'title.aaa'],
+  const selected = props.value;
+
+  const source = props.stations.filter((i) => {
+    if (props.operator !== undefined) {
+      return props.operator.some((j) => i.operator === j);
+    } else {
+      return true;
+    }
+  });
+  const fuse = new Fuse(source, {
+    keys: ['stationCode', 'title.en', 'operatorTitle.en', 'railwayTitle.en'],
   });
 
-  const list =
-    filter === '' ? props.stations : fuse.search(filter).map((i) => i.item);
+  const list = filter === '' ? source : fuse.search(filter).map((i) => i.item);
 
   const [open, setOpen] = React.useState(false);
   const [limit, setLimit] = useState(50);
 
   const handleClickOpen = () => {
-    setLimit(50);
-    setOpen(true);
+    if (props.disable !== true) {
+      setLimit(50);
+      setOpen(true);
+    }
   };
 
   const handleClose = () => {
@@ -67,16 +82,60 @@ function StationPicker(props: Props & ReduxProps) {
     <div className='station-picker'>
       <ButtonBase
         sx={{
-          border: '1px solid #b9bbbd',
-          borderRadius: 1,
+          // border: '1px solid #b9bbbd',
+          borderRadius: isMobile ? 0 : 1,
           px: 4,
           py: 2,
           width: '100%',
-          height: '42px',
+          minHeight: '66px',
           background: '#ffffff',
         }}
         onClick={handleClickOpen}
-      ></ButtonBase>
+        disableRipple={props.disable}
+      >
+        {selected !== undefined ? (
+          <Grid container alignItems='center'>
+            <Grid item xs={2} textAlign='center'>
+              {selected.hasStationIcon ? (
+                <img
+                  src={API.getStationIconPath(selected.id)}
+                  alt={selected.stationCode}
+                  height={50}
+                  style={{ display: 'block', margin: '0 auto' }}
+                  loading={'lazy'}
+                />
+              ) : selected.stationCode ? (
+                <Typography fontWeight={'bold'} fontSize={20} letterSpacing={1}>
+                  {selected.stationCode}
+                </Typography>
+              ) : (
+                <TrainIcon
+                  sx={{ verticalAlign: 'middle', fontSize: '1.75rem' }}
+                />
+              )}
+            </Grid>
+            <Grid item xs={10} sx={{ px: 4 }} textAlign='left'>
+              <Typography fontWeight={'medium'} fontSize={20}>
+                {selected.title?.en}
+              </Typography>
+              <Typography fontSize={14} sx={{ mt: -1 }}>
+                {selected.operatorTitle?.en} - {selected.railwayTitle?.en}
+              </Typography>
+            </Grid>
+          </Grid>
+        ) : (
+          <Grid container alignItems='center'>
+            <Grid item xs={2} textAlign='center'>
+              <TrainIcon
+                sx={{ verticalAlign: 'middle', fontSize: '1.75rem' }}
+              />
+            </Grid>
+            <Grid item xs={10} sx={{ px: 4 }} textAlign='left'>
+              <Typography fontSize={20}>Select a station...</Typography>
+            </Grid>
+          </Grid>
+        )}
+      </ButtonBase>
       <Dialog
         fullScreen={isMobile}
         open={open}
@@ -84,7 +143,7 @@ function StationPicker(props: Props & ReduxProps) {
         TransitionComponent={Transition}
         fullWidth
       >
-        <AppBar sx={{ position: 'relative' }}>
+        <AppBar sx={{ position: 'sticky' }}>
           <Toolbar>
             <IconButton
               edge='start'
@@ -126,7 +185,15 @@ function StationPicker(props: Props & ReduxProps) {
         <List>
           {list.slice(0, limit).map((station, index) => (
             <div key={station.id}>
-              <ListItem button>
+              <ListItem
+                button
+                onClick={() => {
+                  if (props.onChange) {
+                    props.onChange(station);
+                  }
+                  handleClose();
+                }}
+              >
                 <Grid container alignItems='center'>
                   <Grid item xs={2} textAlign='center'>
                     {station.hasStationIcon ? (
