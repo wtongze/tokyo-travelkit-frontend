@@ -139,3 +139,13 @@ export interface StationTimetableItem {
   stationTimetableObject?: StationTimetableObjectItem[];
   note?: MultiLangObject;
 }
+
+export interface RailwayItem {
+  id: string;
+  title?: MultiLangObject;
+  kana?: string;
+  operator: string;
+  operatorTitle?: MultiLangObject;
+  lineCode?: string;
+  color?: string;
+}

@@ -1,47 +1,32 @@
 import {
-  Button,
-  Container,
-  Grid,
-  Typography,
   useMediaQuery,
+  Container,
+  Typography,
   useTheme,
+  Button,
+  Grid,
 } from '@mui/material';
-import { ChevronRight as ChevronRightIcon } from '@mui/icons-material';
 import { useState } from 'react';
-import StationPicker from '../components/StationPicker';
-import { StationItem } from '../type';
 import { useHistory } from 'react-router';
+import RailwayPicker from '../components/RailwayPicker';
+import { RailwayItem } from '../type';
+import { ChevronRight as ChevronRightIcon } from '@mui/icons-material';
 
-const OperatorsWithStationTimetable: string[] = [
-  'odpt.Operator:Sotetsu',
-  'odpt.Operator:YokohamaMunicipal',
-  'odpt.Operator:TamaMonorail',
-  'odpt.Operator:MIR',
-  'odpt.Operator:Yurikamome',
-  'odpt.Operator:Tokyu',
-  'odpt.Operator:TWR',
-  'odpt.Operator:Seibu',
-  'odpt.Operator:Keikyu',
-  'odpt.Operator:Keisei',
-  'odpt.Operator:Keio',
-  'odpt.Operator:JR-East',
-  'odpt.Operator:TokyoMetro',
-  'odpt.Operator:Toei',
-];
-
-function StationsInfoPage() {
+function RailwayInfoPage() {
   const history = useHistory();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
-  const [station, setStation] = useState<StationItem>();
+  const [railway, setRailway] = useState<RailwayItem>();
 
   return (
-    <div className='stations-info-page'>
+    <div className='railway-info-page'>
       <Container sx={{ padding: 4 }}>
         <Typography variant='h5' fontWeight={'medium'}>
-          Station Information
+          Railway Information
         </Typography>
-        <Typography variant='subtitle1'>Check timetables here...</Typography>
+        <Typography variant='subtitle1'>
+          Check railway routes here...
+        </Typography>
         <Grid
           container
           display='flex'
@@ -51,15 +36,15 @@ function StationsInfoPage() {
         >
           <Grid item>
             <Typography fontWeight={'medium'} fontSize={20}>
-              Station
+              Railway
             </Typography>
           </Grid>
           <Grid item>
-            {station ? (
+            {railway ? (
               <Button
                 variant='text'
                 onClick={() => {
-                  setStation(undefined);
+                  setRailway(undefined);
                 }}
               >
                 Clear
@@ -68,13 +53,12 @@ function StationsInfoPage() {
           </Grid>
         </Grid>
         <div style={{ margin: isMobile ? '0 -16px' : undefined }}>
-          <StationPicker
-            title={'Select Station'}
-            value={station}
+          <RailwayPicker
+            title={'Select Railway'}
+            value={railway}
             onChange={(o) => {
-              setStation(o);
+              setRailway(o);
             }}
-            operator={OperatorsWithStationTimetable}
           />
         </div>
         <Grid container sx={{ mt: 4 }} justifyContent='flex-end'>
@@ -83,10 +67,10 @@ function StationsInfoPage() {
               variant='contained'
               disableElevation
               endIcon={<ChevronRightIcon />}
-              disabled={station ? false : true}
+              disabled={railway ? false : true}
               onClick={() => {
-                if (station) {
-                  history.push(`/stations/station-info/${station.id}/timetable`);
+                if (railway) {
+                  history.push(`/stations/railway-info/${railway.id}`);
                 }
               }}
             >
@@ -99,4 +83,4 @@ function StationsInfoPage() {
   );
 }
 
-export default StationsInfoPage;
+export default RailwayInfoPage;

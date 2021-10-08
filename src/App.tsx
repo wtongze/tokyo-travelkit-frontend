@@ -26,6 +26,13 @@ function App(props: ReduxProps) {
         }
       });
     }
+    if (props.railways.length === 0) {
+      API.getRailways().then((data) => {
+        if (data) {
+          props.setRailways(data);
+        }
+      });
+    }
   }, [props]);
 
   return (
@@ -34,7 +41,7 @@ function App(props: ReduxProps) {
         <Route path='/' exact>
           <Redirect to='/direction'></Redirect>
         </Route>
-        <Route path='/stations/station/:stationId/:mode'>
+        <Route path='/stations/station-info/:stationId/:mode'>
           <StationInfoPage />
         </Route>
         <Route path='/stations' exact>

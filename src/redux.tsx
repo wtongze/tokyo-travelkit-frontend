@@ -1,11 +1,12 @@
 import { connect as connectRaw } from 'react-redux';
 import { createStore, Reducer } from 'redux';
-import { StationItem } from './type';
+import { RailwayItem, StationItem } from './type';
 
 interface State {
   primaryLang: string;
   secondaryLang: string;
   stations: StationItem[];
+  railways: RailwayItem[];
 }
 
 interface Action {
@@ -18,6 +19,7 @@ const langReducer: Reducer<State, Action> = function (
     primaryLang: 'en-US',
     secondaryLang: 'en',
     stations: [],
+    railways: [],
   },
   action: Action
 ) {
@@ -36,6 +38,11 @@ const langReducer: Reducer<State, Action> = function (
       return {
         ...state,
         stations: [...action.payload],
+      };
+    case 'SET_RAILWAYS':
+      return {
+        ...state,
+        railways: [...action.payload],
       };
     default:
       return state;
@@ -60,8 +67,11 @@ const mapDispatchToProps = (dispatch: (arg: Action) => void) => {
       dispatch({ type: 'SET_PRIMARY', payload: newLang }),
     setSecondaryLang: (newLang: string) =>
       dispatch({ type: 'SET_SECONDARY', payload: newLang }),
-    setStations: (stations: any[]) => {
+    setStations: (stations: StationItem[]) => {
       dispatch({ type: 'SET_STATIONS', payload: stations });
+    },
+    setRailways: (railways: RailwayItem[]) => {
+      dispatch({ type: 'SET_RAILWAYS', payload: railways });
     },
   };
 };
@@ -70,8 +80,10 @@ export const connect = connectRaw(mapStateToProps, mapDispatchToProps);
 export interface ReduxProps {
   setPrimaryLang: (newLang: string) => void;
   setSecondaryLang: (newLang: string) => void;
-  setStations: (stations: any[]) => void;
+  setStations: (stations: StationItem[]) => void;
+  setRailways: (railways: RailwayItem[]) => void;
   primaryLang: string;
   secondaryLang: string;
   stations: StationItem[];
+  railways: RailwayItem[];
 }

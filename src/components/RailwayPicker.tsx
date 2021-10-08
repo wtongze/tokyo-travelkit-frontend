@@ -24,8 +24,7 @@ import {
 import React, { useState } from 'react';
 import Fuse from 'fuse.js';
 import { connect, ReduxProps } from '../redux';
-import { API } from '../api';
-import { StationItem } from '../type';
+import { RailwayItem } from '../type';
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {
@@ -40,18 +39,18 @@ interface Props {
   title: string;
   operator?: string[];
   disable?: boolean;
-  value?: StationItem;
-  onChange?: (station: StationItem) => void;
+  value?: RailwayItem;
+  onChange?: (station: RailwayItem) => void;
 }
 
-function StationPicker(props: Props & ReduxProps) {
+function RailwayPicker(props: Props & ReduxProps) {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
   const [filter, setFilter] = useState('');
   const selected = props.value;
 
-  const source = props.stations.filter((i) => {
+  const source = props.railways.filter((i) => {
     if (props.operator !== undefined) {
       return props.operator.some((j) => i.operator === j);
     } else {
@@ -59,7 +58,7 @@ function StationPicker(props: Props & ReduxProps) {
     }
   });
   const fuse = new Fuse(source, {
-    keys: ['stationCode', 'title.en', 'operatorTitle.en', 'railwayTitle.en'],
+    keys: ['title.en', 'operatorTitle.en'],
   });
 
   const list = filter === '' ? source : fuse.search(filter).map((i) => i.item);
@@ -79,7 +78,7 @@ function StationPicker(props: Props & ReduxProps) {
   };
 
   return (
-    <div className='station-picker'>
+    <div className='railway-picker'>
       <ButtonBase
         sx={{
           // border: '1px solid #b9bbbd',
@@ -96,18 +95,29 @@ function StationPicker(props: Props & ReduxProps) {
         {selected !== undefined ? (
           <Grid container alignItems='center'>
             <Grid item xs={2} textAlign='center'>
-              {selected.hasStationIcon ? (
-                <img
-                  src={API.getStationIconPath(selected.id)}
-                  alt={selected.stationCode}
-                  height={50}
-                  style={{ display: 'block', margin: '0 auto' }}
-                  loading={'lazy'}
-                />
-              ) : selected.stationCode ? (
-                <Typography fontWeight={'bold'} fontSize={20} letterSpacing={1}>
-                  {selected.stationCode}
-                </Typography>
+              {selected.lineCode || selected.color ? (
+                <Grid container alignItems='center' wrap='nowrap'>
+                  {selected.color ? (
+                    <Grid item xs={5}>
+                      <div
+                        style={{
+                          width: '15px',
+                          height: '50px',
+                          backgroundColor: selected.color,
+                        }}
+                      ></div>
+                    </Grid>
+                  ) : null}
+                  <Grid item flexGrow={1} textAlign='center'>
+                    <Typography
+                      fontWeight={'bold'}
+                      fontSize={20}
+                      letterSpacing={1}
+                    >
+                      {selected.lineCode}
+                    </Typography>
+                  </Grid>
+                </Grid>
               ) : (
                 <TrainIcon
                   sx={{ verticalAlign: 'middle', fontSize: '1.75rem' }}
@@ -119,7 +129,7 @@ function StationPicker(props: Props & ReduxProps) {
                 {selected.title?.en}
               </Typography>
               <Typography fontSize={14} sx={{ mt: 1 }}>
-                {selected.operatorTitle?.en} - {selected.railwayTitle?.en}
+                {selected.operatorTitle?.en}
               </Typography>
             </Grid>
           </Grid>
@@ -131,7 +141,7 @@ function StationPicker(props: Props & ReduxProps) {
               />
             </Grid>
             <Grid item xs={10} sx={{ px: 4 }} textAlign='left'>
-              <Typography fontSize={20}>Select a station...</Typography>
+              <Typography fontSize={20}>Select a railway...</Typography>
             </Grid>
           </Grid>
         )}
@@ -180,38 +190,45 @@ function StationPicker(props: Props & ReduxProps) {
           onChange={(e) => {
             setFilter(e.target.value);
           }}
-          placeholder={'Station Code / Name'}
+          placeholder={'Railway Line Code / Name'}
         ></TextField>
         <List>
-          {list.slice(0, limit).map((station, index) => (
-            <div key={station.id}>
+          {list.slice(0, limit).map((railway, index) => (
+            <div key={railway.id}>
               <ListItem
                 button
                 onClick={() => {
                   if (props.onChange) {
-                    props.onChange(station);
+                    props.onChange(railway);
                   }
                   handleClose();
                 }}
               >
                 <Grid container alignItems='center'>
                   <Grid item xs={2} textAlign='center'>
-                    {station.hasStationIcon ? (
-                      <img
-                        src={API.getStationIconPath(station.id)}
-                        alt={station.stationCode}
-                        height={50}
-                        style={{ display: 'block', margin: '0 auto' }}
-                        loading={'lazy'}
-                      />
-                    ) : station.stationCode ? (
-                      <Typography
-                        fontWeight={'bold'}
-                        fontSize={20}
-                        letterSpacing={1}
-                      >
-                        {station.stationCode}
-                      </Typography>
+                    {railway.lineCode || railway.color ? (
+                      <Grid container alignItems='center' wrap='nowrap'>
+                        {railway.color ? (
+                          <Grid item xs={5}>
+                            <div
+                              style={{
+                                width: '15px',
+                                height: '50px',
+                                backgroundColor: railway.color,
+                              }}
+                            ></div>
+                          </Grid>
+                        ) : null}
+                        <Grid item flexGrow={1} textAlign='center'>
+                          <Typography
+                            fontWeight={'bold'}
+                            fontSize={20}
+                            letterSpacing={1}
+                          >
+                            {railway.lineCode}
+                          </Typography>
+                        </Grid>
+                      </Grid>
                     ) : (
                       <TrainIcon
                         sx={{ verticalAlign: 'middle', fontSize: '1.75rem' }}
@@ -224,10 +241,10 @@ function StationPicker(props: Props & ReduxProps) {
                       fontSize={20}
                       lineHeight={1.25}
                     >
-                      {station.title?.en}
+                      {railway.title?.en}
                     </Typography>
                     <Typography fontSize={14} sx={{ mt: 1 }}>
-                      {station.operatorTitle?.en} - {station.railwayTitle?.en}
+                      {railway.operatorTitle?.en}
                     </Typography>
                   </Grid>
                 </Grid>
@@ -257,4 +274,4 @@ function StationPicker(props: Props & ReduxProps) {
   );
 }
 
-export default connect(StationPicker);
+export default connect(RailwayPicker);

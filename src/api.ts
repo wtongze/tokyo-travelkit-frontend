@@ -6,6 +6,7 @@ import {
   StationItem,
   StationInfo,
   StationTimetableItem,
+  RailwayItem,
 } from './type';
 
 const endpoint =
@@ -136,6 +137,17 @@ async function getStationTimetable(
   }
 }
 
+async function getRailways(): Promise<RailwayItem[] | undefined> {
+  const response = await axios.get<RailwayItem[]>(
+    `${endpoint}/common/railways`
+  );
+  if (response.status === 200) {
+    return response.data;
+  } else {
+    return undefined;
+  }
+}
+
 export const API = {
   getDepartureInformation,
   getDepartureFlightInformation,
@@ -146,4 +158,5 @@ export const API = {
   getRailwayFareInformation,
   getStationInfo,
   getStationTimetable,
+  getRailways,
 };
