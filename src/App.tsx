@@ -14,6 +14,8 @@ import { connect, ReduxProps } from './redux';
 import { API } from './api';
 import { useEffect } from 'react';
 import TicketFarePage from './pages/TicketFarePage';
+import StationsTabPage from './pages/StationsTabPage';
+import StationInfoPage from './pages/StationInfoPage';
 
 function App(props: ReduxProps) {
   useEffect(() => {
@@ -32,6 +34,12 @@ function App(props: ReduxProps) {
         <Route path='/' exact>
           <Redirect to='/direction'></Redirect>
         </Route>
+        <Route path='/stations/station/:stationId/:mode'>
+          <StationInfoPage />
+        </Route>
+        <Route path='/stations' exact>
+          <Redirect to='/stations/station-info'></Redirect>
+        </Route>
         <Route path='/ticket/calculator/:from/:to'>
           <TicketFarePage />
         </Route>
@@ -48,6 +56,9 @@ function App(props: ReduxProps) {
         <Route>
           <AppFrame>
             <Switch>
+              <Route path='/stations'>
+                <StationsTabPage />
+              </Route>
               <Route path='/ticket'>
                 <TicketTabPage />
               </Route>

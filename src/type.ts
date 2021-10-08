@@ -87,3 +87,55 @@ export interface RailwayFareInfo {
   ticketType?: string;
   paymentMethod?: string[];
 }
+
+export interface StationInfo {
+  id: string;
+  title?: MultiLangObject;
+  operatorTitle?: MultiLangObject;
+  railwayTitle?: MultiLangObject;
+  connectingRailway?: {
+    id: string;
+    railwayTitle?: MultiLangObject;
+  }[];
+  connectingStation?: {
+    id?: string;
+    stationTitle?: MultiLangObject;
+  }[];
+  stationTimetable?: {
+    id: string;
+    calendar?: string;
+    calendarTitle?: MultiLangObject;
+    railDirection?: string;
+    railDirectionTitle?: MultiLangObject;
+  }[];
+}
+
+export interface StationTimetableObjectItem {
+  arrivalTime?: string;
+  departureTime?: string;
+  originStation?: { id: string; stationTitle?: MultiLangObject }[];
+  destinationStation?: { id: string; stationTitle?: MultiLangObject }[];
+  viaStation?: { id: string; stationTitle?: MultiLangObject }[];
+  viaRailway?: { id: string; railwayTitle?: MultiLangObject }[];
+  train?: string;
+  trainNumber?: string;
+  trainTypeTitle?: MultiLangObject;
+  trainName?: MultiLangObject[];
+  trainOwner?: MultiLangObject;
+  isLast?: boolean;
+  isOrigin?: boolean;
+  platformNumber?: string;
+  carCompositions?: number;
+  note?: MultiLangObject;
+}
+
+export interface StationTimetableItem {
+  id: string;
+  operatorTitle?: MultiLangObject;
+  railwayTitle?: MultiLangObject;
+  stationTitle?: MultiLangObject;
+  railDirectionTitle?: MultiLangObject;
+  calendarTitle?: MultiLangObject;
+  stationTimetableObject?: StationTimetableObjectItem[];
+  note?: MultiLangObject;
+}

@@ -15,7 +15,7 @@ import {
 import {
   Menu as MenuIcon,
   Directions as DirectionsIcon,
-  TripOrigin as OriginIcon,
+  Train as TrainIcon,
   Flight as FlightIcon,
   Translate as TranslateIcon,
   ConfirmationNumber as TicketIcon,
@@ -45,9 +45,9 @@ const menuItems = [
     path: '/direction',
   },
   {
-    label: 'Station',
-    icon: <OriginIcon />,
-    path: '/station',
+    label: 'Stations',
+    icon: <TrainIcon />,
+    path: '/stations',
   },
   {
     label: 'Ticket',
@@ -71,6 +71,18 @@ const getDefaultTabs = (path: string): TabItem[] => {
       {
         label: 'Travel Pass',
         path: '/ticket/travel-pass',
+      },
+    ];
+  }
+  if (path.includes('/stations/')) {
+    return [
+      {
+        label: 'Station Info',
+        path: '/stations/station-info',
+      },
+      {
+        label: 'Railway Info',
+        path: '/stations/railway-info',
       },
     ];
   } else {

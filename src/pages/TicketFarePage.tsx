@@ -39,7 +39,7 @@ function TicketFarePage(props: ReduxProps) {
     <div className='ticket-fare-page'>
       <AppFrame
         hideBottomNav
-        title={'Search by Airport'}
+        title={'Ticket Fare Information'}
         prevIcon={<ChevronLeftIcon />}
         onPrev={() => history.push('/ticket/calculator')}
         tabs={[]}
