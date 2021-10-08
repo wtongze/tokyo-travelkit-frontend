@@ -1,5 +1,10 @@
 import axios from 'axios';
-import { DepartureInformationItem, ArrivalInformationItem } from './type';
+import {
+  DepartureInformationItem,
+  ArrivalInformationItem,
+  RailwayFareInfo,
+  StationItem,
+} from './type';
 
 const endpoint =
   process.env.NODE_ENV === 'development'
@@ -74,8 +79,10 @@ async function getArrivalFlightInformation(
   }
 }
 
-async function getStations(): Promise<any[] | undefined> {
-  const response = await axios.get<any[]>(`${endpoint}/common/stations`);
+async function getStations(): Promise<StationItem[] | undefined> {
+  const response = await axios.get<StationItem[]>(
+    `${endpoint}/common/stations`
+  );
   if (response.status === 200) {
     return response.data;
   } else {
@@ -87,6 +94,20 @@ function getStationIconPath(id: string): string {
   return `${endpoint}/station/icon/${id}`;
 }
 
+async function getRailwayFareInformation(
+  from: string,
+  to: string
+): Promise<RailwayFareInfo[] | undefined> {
+  const response = await axios.get<RailwayFareInfo[]>(
+    `${endpoint}/railway/fare/${from}/${to}`
+  );
+  if (response.status === 200) {
+    return response.data;
+  } else {
+    return undefined;
+  }
+}
+
 export const API = {
   getDepartureInformation,
   getDepartureFlightInformation,
@@ -94,4 +115,5 @@ export const API = {
   getArrivalFlightInformation,
   getStations,
   getStationIconPath,
+  getRailwayFareInformation,
 };

@@ -13,6 +13,7 @@ import TicketTabPage from './pages/TicketTabPage';
 import { connect, ReduxProps } from './redux';
 import { API } from './api';
 import { useEffect } from 'react';
+import TicketFarePage from './pages/TicketFarePage';
 
 function App(props: ReduxProps) {
   useEffect(() => {
@@ -30,6 +31,9 @@ function App(props: ReduxProps) {
       <Switch>
         <Route path='/' exact>
           <Redirect to='/direction'></Redirect>
+        </Route>
+        <Route path='/ticket/calculator/:from/:to'>
+          <TicketFarePage />
         </Route>
         <Route path='/ticket' exact>
           <Redirect to='/ticket/calculator'></Redirect>

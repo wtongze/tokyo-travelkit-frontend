@@ -66,3 +66,24 @@ export interface StationItem {
   operatorTitle?: MultiLangObject;
   hasStationIcon?: boolean;
 }
+
+export interface RailwayFareInfo {
+  id: string;
+  operatorTitle?: MultiLangObject;
+  fromStationTitle?: MultiLangObject;
+  toStationTitle?: MultiLangObject;
+  ticketFare: number;
+  icCardFare?: number;
+  childTicketFare?: number;
+  childIcCardFare?: number;
+  viaStation?: {
+    id: string;
+    stationTitle?: MultiLangObject;
+  }[];
+  viaRailway?: {
+    id: string;
+    railwayTitle?: MultiLangObject;
+  }[];
+  ticketType?: string;
+  paymentMethod?: string[];
+}
