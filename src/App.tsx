@@ -1,4 +1,4 @@
-import { Typography } from '@mui/material';
+import { Container, Typography } from '@mui/material';
 import {
   BrowserRouter as Router,
   Switch,
@@ -17,6 +17,8 @@ import TicketFarePage from './pages/TicketFarePage';
 import StationsTabPage from './pages/StationsTabPage';
 import StationInfoPage from './pages/StationInfoPage';
 import RailwayInfoPage from './pages/RailwayInfoPage';
+import DirectionPage from './pages/DirectionPage';
+import RoutePage from './pages/RoutePage';
 
 function App(props: ReduxProps) {
   useEffect(() => {
@@ -44,6 +46,9 @@ function App(props: ReduxProps) {
         <Route path='/' exact>
           <Redirect to='/direction'></Redirect>
         </Route>
+        <Route path='/direction/:origin/:destination'>
+          <RoutePage />
+        </Route>
         <Route path='/stations/railway-info/:railwayId'>
           <RailwayInfoPage />
         </Route>
@@ -69,6 +74,9 @@ function App(props: ReduxProps) {
         <Route>
           <AppFrame>
             <Switch>
+              <Route path='/direction'>
+                <DirectionPage />
+              </Route>
               <Route path='/stations'>
                 <StationsTabPage />
               </Route>
@@ -79,7 +87,9 @@ function App(props: ReduxProps) {
                 <FlightTabPage />
               </Route>
               <Route>
-                <Typography variant='h1'>Default</Typography>
+                <Container>
+                  <Typography variant='h5'>Page Not Found</Typography>
+                </Container>
               </Route>
             </Switch>
           </AppFrame>

@@ -165,3 +165,59 @@ export interface RailwayInfo {
     index: number;
   }[];
 }
+
+interface RouteStartTransfer {
+  type: 'START_TRANSFER';
+  fromTime: string;
+  from: string;
+}
+
+interface RouteTrain {
+  type: 'TRAIN';
+  fromTime: string;
+  from: string;
+  toTime: string;
+  to: string;
+  trainTimetable: TrainTimetableItem;
+  via: { railwayId: string; stops: string[] }[];
+}
+
+interface RouteTransfer {
+  type: 'TRANSFER';
+}
+
+interface RouteEndTransfer {
+  type: 'END_TRANSFER';
+  toTime: string;
+  to: string;
+}
+
+export interface DirectionRoute {
+  from: string;
+  fromTime: string;
+  to: string;
+  toTime: string;
+  time: number;
+  directions: (
+    | RouteStartTransfer
+    | RouteTrain
+    | RouteTransfer
+    | RouteEndTransfer
+  )[];
+}
+
+export interface TrainTimetableItem {
+  id: string;
+  operatorTitle?: MultiLangObject;
+  railway: string;
+  railwayTitle?: MultiLangObject;
+  railDirectionTitle?: MultiLangObject;
+  trainNumber?: string;
+  trainTypeTitle?: MultiLangObject;
+  trainName?: MultiLangObject[];
+  trainOwnerTitle?: MultiLangObject;
+  originStation?: string[];
+  destinationStation?: string[];
+  viaStation?: string[];
+  viaRailway?: string[];
+}

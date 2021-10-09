@@ -8,6 +8,7 @@ import {
   StationTimetableItem,
   RailwayItem,
   RailwayInfo,
+  TrainTimetableItem,
 } from './type';
 
 const endpoint =
@@ -162,6 +163,19 @@ async function getRailwayInfo(
   }
 }
 
+async function getTrainTimetable(
+  trainTimetableId: string
+): Promise<TrainTimetableItem | undefined> {
+  const response = await axios.get<TrainTimetableItem>(
+    `${endpoint}/train/timetable/${trainTimetableId}`
+  );
+  if (response.status === 200) {
+    return response.data;
+  } else {
+    return undefined;
+  }
+}
+
 export const API = {
   getDepartureInformation,
   getDepartureFlightInformation,
@@ -174,4 +188,5 @@ export const API = {
   getStationTimetable,
   getRailways,
   getRailwayInfo,
+  getTrainTimetable,
 };
