@@ -149,3 +149,19 @@ export interface RailwayItem {
   lineCode?: string;
   color?: string;
 }
+
+export interface RailwayInfo {
+  id: string;
+  title?: MultiLangObject;
+  kana?: string;
+  operatorTitle?: MultiLangObject;
+  lineCode?: string;
+  color?: string;
+  ascendingRailDirectionTitle?: MultiLangObject;
+  descendingRailDirectionTitle?: MultiLangObject;
+  stationOrder: {
+    station: string;
+    title?: MultiLangObject;
+    index: number;
+  }[];
+}

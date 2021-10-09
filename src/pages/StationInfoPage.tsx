@@ -29,7 +29,7 @@ function StationInfoPage(props: ReduxProps) {
       prevIcon={<ChevronLeftIcon />}
       onPrev={() => history.push(`/stations/station-info`)}
       onChangeTab={(i) => {
-        history.push(`/stations/station/${stationId}/${tabs[i].match}`);
+        history.push(`/stations/station-info/${stationId}/${tabs[i].match}`);
       }}
       title={'Station Information'}
       hideBottomNav

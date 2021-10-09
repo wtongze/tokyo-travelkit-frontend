@@ -16,10 +16,12 @@ import { useEffect } from 'react';
 import TicketFarePage from './pages/TicketFarePage';
 import StationsTabPage from './pages/StationsTabPage';
 import StationInfoPage from './pages/StationInfoPage';
+import RailwayInfoPage from './pages/RailwayInfoPage';
 
 function App(props: ReduxProps) {
   useEffect(() => {
     if (props.stations.length === 0) {
+      props.setStations([{ id: '', railway: '', operator: '' }]);
       API.getStations().then((data) => {
         if (data) {
           props.setStations(data);
@@ -27,6 +29,7 @@ function App(props: ReduxProps) {
       });
     }
     if (props.railways.length === 0) {
+      props.setRailways([{ id: '', operator: '' }]);
       API.getRailways().then((data) => {
         if (data) {
           props.setRailways(data);
@@ -40,6 +43,9 @@ function App(props: ReduxProps) {
       <Switch>
         <Route path='/' exact>
           <Redirect to='/direction'></Redirect>
+        </Route>
+        <Route path='/stations/railway-info/:railwayId'>
+          <RailwayInfoPage />
         </Route>
         <Route path='/stations/station-info/:stationId/:mode'>
           <StationInfoPage />

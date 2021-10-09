@@ -1,5 +1,5 @@
 import { useLocation } from 'react-router';
-import RailwayInfoPage from './RailwayInfoPage';
+import RailwaysInfoPage from './RailwaysInfoPage';
 import StationsInfoPage from './StationsInfoPage';
 
 function StationsTabPage() {
@@ -8,7 +8,7 @@ function StationsTabPage() {
   return location.pathname === '/stations/station-info' ? (
     <StationsInfoPage />
   ) : (
-    <RailwayInfoPage />
+    <RailwaysInfoPage />
   );
 }
 

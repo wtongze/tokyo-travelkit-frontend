@@ -1,86 +1,39 @@
-import {
-  useMediaQuery,
-  Container,
-  Typography,
-  useTheme,
-  Button,
-  Grid,
-} from '@mui/material';
-import { useState } from 'react';
-import { useHistory } from 'react-router';
-import RailwayPicker from '../components/RailwayPicker';
-import { RailwayItem } from '../type';
-import { ChevronRight as ChevronRightIcon } from '@mui/icons-material';
+import { useHistory, useRouteMatch } from 'react-router';
+import { ChevronLeft as ChevronLeftIcon } from '@mui/icons-material';
+import AppFrame from '../components/AppFrame';
+import RailwayStationOrderPage from './RailwayStationOrderPage';
+import { ReduxProps, connect } from '../redux';
 
-function RailwayInfoPage() {
+const tabs = [
+  {
+    label: 'Station Order',
+    match: 'station-order',
+  },
+];
+
+function RailwayInfoPage(props: ReduxProps) {
   const history = useHistory();
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
-  const [railway, setRailway] = useState<RailwayItem>();
+  const match = useRouteMatch<{
+    railwayId: string;
+  }>();
+  const { railwayId } = match.params;
 
   return (
-    <div className='railway-info-page'>
-      <Container sx={{ padding: 4 }}>
-        <Typography variant='h5' fontWeight={'medium'}>
-          Railway Information
-        </Typography>
-        <Typography variant='subtitle1'>
-          Check railway routes here...
-        </Typography>
-        <Grid
-          container
-          display='flex'
-          alignItems='center'
-          justifyContent='space-between'
-          sx={{ mt: 4, mb: 2, height: '36px' }}
-        >
-          <Grid item>
-            <Typography fontWeight={'medium'} fontSize={20}>
-              Railway
-            </Typography>
-          </Grid>
-          <Grid item>
-            {railway ? (
-              <Button
-                variant='text'
-                onClick={() => {
-                  setRailway(undefined);
-                }}
-              >
-                Clear
-              </Button>
-            ) : null}
-          </Grid>
-        </Grid>
-        <div style={{ margin: isMobile ? '0 -16px' : undefined }}>
-          <RailwayPicker
-            title={'Select Railway'}
-            value={railway}
-            onChange={(o) => {
-              setRailway(o);
-            }}
-          />
-        </div>
-        <Grid container sx={{ mt: 4 }} justifyContent='flex-end'>
-          <Grid item>
-            <Button
-              variant='contained'
-              disableElevation
-              endIcon={<ChevronRightIcon />}
-              disabled={railway ? false : true}
-              onClick={() => {
-                if (railway) {
-                  history.push(`/stations/railway-info/${railway.id}`);
-                }
-              }}
-            >
-              Get Information
-            </Button>
-          </Grid>
-        </Grid>
-      </Container>
-    </div>
+    <AppFrame
+      tabs={tabs}
+      prevIcon={<ChevronLeftIcon />}
+      onPrev={() => history.push(`/stations/railway-info`)}
+      onChangeTab={(i) => {
+        history.push(`/stations/railway-info/${railwayId}/${tabs[i].match}`);
+      }}
+      title={'Railway Information'}
+      hideBottomNav
+    >
+      <div className='railway-info-page'>
+        <RailwayStationOrderPage railwayId={railwayId} />
+      </div>
+    </AppFrame>
   );
 }
 
-export default RailwayInfoPage;
+export default connect(RailwayInfoPage);
