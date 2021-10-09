@@ -233,7 +233,8 @@ function StationPicker(props: Props & ReduxProps) {
                 </Grid>
               </ListItem>
               <Divider />
-              {index === list.length - 1 || index === limit - 1 ? (
+              {(index === list.length - 1 || index === limit - 1) &&
+              limit < list.length ? (
                 <ListItem
                   button
                   onClick={() => {
