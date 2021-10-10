@@ -346,10 +346,12 @@ function RoutePage(props: ReduxProps) {
                                 ></div>
                               </Grid>
                               <Grid item xs={9} sx={{ px: 4, py: 3 }}>
-                                <Typography>
-                                  Direct service to {vRailway?.title?.en} via{' '}
-                                  {stop?.title?.en}
-                                </Typography>
+                                {vNextRailway ? (
+                                  <Typography>
+                                    Direct service to {vNextRailway.title?.en}{' '}
+                                    via {stop?.title?.en}
+                                  </Typography>
+                                ) : null}
                               </Grid>
                             </Grid>
                           ) : null}
