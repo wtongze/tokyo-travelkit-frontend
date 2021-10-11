@@ -180,6 +180,7 @@ async function getTrainTimetable(
 async function getDirection(
   from: string,
   to: string,
+  calendar: string,
   fromTime?: string,
   toTime?: string,
   operatorPreference?: {
@@ -192,7 +193,8 @@ async function getDirection(
       params: {
         fromTime: fromTime || undefined,
         toTime: toTime || undefined,
-        calendar: 'weekday',
+        calendar,
+        ...operatorPreference,
       },
     }
   );

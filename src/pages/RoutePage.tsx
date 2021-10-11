@@ -44,6 +44,7 @@ function RoutePage(props: ReduxProps) {
 
     const fromTime = query.get('fromTime') || undefined;
     const toTime = query.get('toTime') || undefined;
+    const calendar = query.get('calendar') || 'weekday';
 
     if (
       route === undefined &&
@@ -53,6 +54,7 @@ function RoutePage(props: ReduxProps) {
       API.getDirection(
         origin,
         destination,
+        calendar,
         fromTime,
         toTime,
         operatorPref
@@ -592,7 +594,8 @@ function RoutePage(props: ReduxProps) {
           ) : (
             <Alert severity='error' sx={{ mt: 4 }}>
               <Typography>
-                Route not found. Please refine the search parameter and try again.
+                Route not found. Please refine the search parameter and try
+                again.
               </Typography>
             </Alert>
           )}
