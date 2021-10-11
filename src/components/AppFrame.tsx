@@ -11,6 +11,11 @@ import {
   useTheme,
   useMediaQuery,
   Button,
+  Slide,
+  Dialog,
+  Select,
+  MenuItem,
+  Grid,
 } from '@mui/material';
 import {
   Menu as MenuIcon,
@@ -19,8 +24,11 @@ import {
   Flight as FlightIcon,
   Translate as TranslateIcon,
   ConfirmationNumber as TicketIcon,
+  Close as CloseIcon,
 } from '@mui/icons-material';
 import { useHistory, useLocation } from 'react-router';
+import { TransitionProps } from '@mui/material/transitions';
+import { connect, ReduxProps } from '../redux';
 
 interface TabItem {
   label: string;
@@ -61,6 +69,28 @@ const menuItems = [
   },
 ];
 
+const primaryLangList = [
+  {
+    value: 'en',
+    label: 'English',
+  },
+  {
+    value: 'zh-Hans',
+    label: 'Simplified Chinese',
+  },
+];
+
+const secondaryLangList = [
+  {
+    value: 'en',
+    label: 'English',
+  },
+  {
+    value: 'ja',
+    label: 'Japanese',
+  },
+];
+
 const getDefaultTabs = (path: string): TabItem[] => {
   if (path.includes('/ticket')) {
     return [
@@ -90,14 +120,23 @@ const getDefaultTabs = (path: string): TabItem[] => {
   }
 };
 
-function AppFrame(props: Props) {
+const Transition = React.forwardRef(function Transition(
+  props: TransitionProps & {
+    children?: React.ReactElement;
+  },
+  ref: React.Ref<unknown>
+) {
+  return <Slide direction='up' ref={ref} {...props} />;
+});
+
+function AppFrame(props: Props & ReduxProps) {
   const location = useLocation();
 
   const [innerHeight, setInnerHight] = useState<number>(window.innerHeight);
 
   function reportWindowSize() {
     setInnerHight(window.innerHeight);
-  };
+  }
 
   useEffect(() => {
     window.addEventListener('resize', reportWindowSize);
@@ -105,6 +144,16 @@ function AppFrame(props: Props) {
       window.removeEventListener('resize', reportWindowSize);
     };
   });
+
+  const [open, setOpen] = React.useState(false);
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
 
   const menuIndex =
     menuItems.findIndex((i) => location.pathname.startsWith(i.path)) || 0;
@@ -128,6 +177,11 @@ function AppFrame(props: Props) {
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const isLandscape = useMediaQuery('orientation: landscape');
   const headerHeight = isLandscape ? 48 : isMobile ? 56 : 64;
+
+  const [tempPrimaryLang, setTempPrimaryLang] = useState(props.primaryLang);
+  const [tempSecondaryLang, settempSecondaryLang] = useState(
+    props.secondaryLang
+  );
 
   return (
     <div className='app-frame'>
@@ -159,7 +213,7 @@ function AppFrame(props: Props) {
                 </Button>
               ))}
 
-          <IconButton color='inherit'>
+          <IconButton color='inherit' onClick={handleClickOpen}>
             <TranslateIcon />
           </IconButton>
         </Toolbar>
@@ -220,8 +274,79 @@ function AppFrame(props: Props) {
           </BottomNavigation>
         </div>
       ) : null}
+      <Dialog
+        fullScreen={isMobile}
+        open={open}
+        onClose={handleClose}
+        TransitionComponent={Transition}
+      >
+        <AppBar sx={{ position: 'relative' }}>
+          <Toolbar>
+            <IconButton
+              edge='start'
+              color='inherit'
+              onClick={handleClose}
+              aria-label='close'
+            >
+              <CloseIcon />
+            </IconButton>
+            <Typography sx={{ ml: 2, flex: 1 }} variant='h6' component='div'>
+              Language
+            </Typography>
+            <Button
+              autoFocus
+              color='inherit'
+              onClick={() => {
+                if (props.primaryLang !== tempPrimaryLang) {
+                  props.setPrimaryLang(tempPrimaryLang);
+                }
+                if (props.secondaryLang !== tempSecondaryLang) {
+                  props.setSecondaryLang(tempSecondaryLang);
+                }
+                handleClose();
+              }}
+            >
+              save
+            </Button>
+          </Toolbar>
+        </AppBar>
+        <Grid sx={{ padding: 4 }}>
+          <Typography sx={{ mb: 2 }}>Primary Language</Typography>
+          <Select
+            fullWidth
+            value={tempPrimaryLang}
+            onChange={(e) => {
+              setTempPrimaryLang(e.target.value);
+            }}
+            size='small'
+            sx={{ fontFamily: 'inherit' }}
+          >
+            {primaryLangList.map((l) => (
+              <MenuItem value={l.value} key={l.value}>
+                {l.label}
+              </MenuItem>
+            ))}
+          </Select>
+          <Typography sx={{ mt: 4, mb: 2 }}>Secondary Language</Typography>
+          <Select
+            fullWidth
+            value={tempSecondaryLang}
+            onChange={(e) => {
+              settempSecondaryLang(e.target.value);
+            }}
+            size='small'
+            sx={{ fontFamily: 'inherit' }}
+          >
+            {secondaryLangList.map((l) => (
+              <MenuItem value={l.value} key={l.value}>
+                {l.label}
+              </MenuItem>
+            ))}
+          </Select>
+        </Grid>
+      </Dialog>
     </div>
   );
 }
 
-export default AppFrame;
+export default connect(AppFrame);

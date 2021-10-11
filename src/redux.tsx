@@ -14,10 +14,41 @@ interface Action {
   payload: any;
 }
 
+// Interface language
+const primaryLangMap = {
+  en: 'en',
+  'zh-CN': 'zh-Hans',
+  // zh: 'zh-Hant',
+  // ko: 'ko',
+  // jp: 'jp',
+};
+
+let primaryLang = 'en';
+navigator.languages.forEach((l) => {
+  if (l in primaryLangMap) {
+    // @ts-ignore
+    primaryLang = primaryLangMap[l];
+  }
+});
+
+// Fallback language
+const secondaryLangMap = {
+  en: 'en',
+  jp: 'jp',
+};
+
+let secondaryLang = 'en';
+navigator.languages.forEach((l) => {
+  if (l in secondaryLangMap) {
+    // @ts-ignore
+    secondaryLang = secondaryLangMap[l];
+  }
+});
+
 const langReducer: Reducer<State, Action> = function (
   state = {
-    primaryLang: 'en-US',
-    secondaryLang: 'en',
+    primaryLang,
+    secondaryLang,
     stations: [],
     railways: [],
   },
