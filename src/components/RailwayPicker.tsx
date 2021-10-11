@@ -185,7 +185,6 @@ function RailwayPicker(props: Props & ReduxProps) {
               </InputAdornment>
             ),
           }}
-          autoFocus
           value={filter}
           onChange={(e) => {
             setFilter(e.target.value);

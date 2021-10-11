@@ -118,7 +118,7 @@ function AppFrame(props: Props) {
 
   return (
     <div className='app-frame'>
-      <AppBar position='sticky' sx={{ flexWrap: 'wrap' }}>
+      <AppBar position='relative' sx={{ flexWrap: 'wrap' }}>
         <Toolbar>
           <IconButton
             size='large'
@@ -179,7 +179,7 @@ function AppFrame(props: Props) {
       <div
         className='content'
         style={{
-          height: `calc(100vh - ${
+          height: `calc(${window.innerHeight}px - ${
             isMobile && !props.hideBottomNav ? '56px' : '0px'
           } - ${headerHeight}px - ${subMenus.length > 0 ? '48px' : '0px'})`,
           backgroundColor: props.backgroundColor

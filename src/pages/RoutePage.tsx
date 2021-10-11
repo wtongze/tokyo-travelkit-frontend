@@ -5,10 +5,9 @@ import {
   KeyboardArrowUp as KeyboardArrowUpIcon,
   Train as TrainIcon,
 } from '@mui/icons-material';
-import { useHistory, useParams } from 'react-router';
+import { useHistory, useLocation, useParams } from 'react-router';
 import { Container, Grid, Typography, Chip, Button } from '@mui/material';
 import { useEffect, useState } from 'react';
-import routeTest from './RouteTest.json';
 import { DirectionRoute } from '../type';
 import { connect, ReduxProps } from '../redux';
 import { API } from '../api';
@@ -16,47 +15,56 @@ import { API } from '../api';
 function RoutePage(props: ReduxProps) {
   const history = useHistory();
   const params = useParams<{ origin: string; destination: string }>();
+  const location = useLocation();
   const [route, setRoute] = useState<DirectionRoute>();
   const [hideList, setHideList] = useState<boolean[][]>([]);
 
   const { origin, destination } = params;
-  const mode = 'all';
-  const fromTime = '14:00';
+  const query = new URLSearchParams(location.search.substring(1));
+  const fromTime = query.get('fromTime') || undefined;
+  const toTime = query.get('toTime') || undefined;
 
   useEffect(() => {
     let subscribe = true;
 
-    setTimeout(() => {
-      console.log(origin, destination, fromTime, mode);
-      if (route === undefined && subscribe) {
-        setRoute(routeTest as DirectionRoute);
+    if (
+      route === undefined &&
+      (fromTime !== undefined || toTime !== undefined) &&
+      fromTime !== toTime
+    ) {
+      API.getDirection(origin, destination, fromTime, toTime, undefined).then(
+        (data) => {
+          if (data && subscribe) {
+            setRoute(data);
 
-        let total: boolean[][] = [];
-        for (let i = 0; i < routeTest.directions.length - 1; i++) {
-          const step = routeTest.directions[i];
-          if (step.type === 'TRAIN') {
-            if (step.via) {
-              const temp: boolean[] = [];
-              for (let j = 0; j < step.via.length; j++) {
-                temp.push(true);
+            let total: boolean[][] = [];
+            for (let i = 0; i < data.directions.length; i++) {
+              const step = data.directions[i];
+              if (step.type === 'TRAIN') {
+                if (step.via) {
+                  const temp: boolean[] = [];
+
+                  for (let j = 0; j < step.via.length; j++) {
+                    temp.push(true);
+                  }
+                  total.push(temp);
+                } else {
+                  total.push([]);
+                }
+              } else {
+                total.push([]);
               }
-              total.push(temp);
-            } else {
-              total.push([]);
             }
-          } else {
-            total.push([]);
+            setHideList(total);
           }
         }
-        setHideList(total);
-        console.log(total);
-      }
-    }, 1000);
+      );
+    }
 
     return () => {
       subscribe = false;
     };
-  });
+  }, [route, origin, destination, fromTime, toTime]);
 
   return (
     <div className='route-page'>

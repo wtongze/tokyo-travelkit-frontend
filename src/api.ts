@@ -9,6 +9,7 @@ import {
   RailwayItem,
   RailwayInfo,
   TrainTimetableItem,
+  DirectionRoute,
 } from './type';
 
 const endpoint =
@@ -176,6 +177,32 @@ async function getTrainTimetable(
   }
 }
 
+async function getDirection(
+  from: string,
+  to: string,
+  fromTime?: string,
+  toTime?: string,
+  operatorPreference?: {
+    [operator: string]: boolean;
+  }
+) {
+  const response = await axios.get<DirectionRoute>(
+    `${endpoint}/direction/all/${from}/${to}`,
+    {
+      params: {
+        fromTime: fromTime || undefined,
+        toTime: toTime || undefined,
+        calendar: 'weekday',
+      },
+    }
+  );
+  if (response.status === 200) {
+    return response.data;
+  } else {
+    return undefined;
+  }
+}
+
 export const API = {
   getDepartureInformation,
   getDepartureFlightInformation,
@@ -189,4 +216,5 @@ export const API = {
   getRailways,
   getRailwayInfo,
   getTrainTimetable,
+  getDirection,
 };
