@@ -163,7 +163,7 @@ function OperatorPicker(props: Props) {
                 handleClose();
               }}
             >
-              save
+              <Typography fontWeight={'medium'}>save</Typography>
             </Button>
           </Toolbar>
         </AppBar>
@@ -185,19 +185,18 @@ function OperatorPicker(props: Props) {
                   }}
                   dense
                 >
-                  <ListItemText>
-                    <Typography fontSize={16} lineHeight={1.25}>
-                      {operator.title.en}
-                    </Typography>
-                  </ListItemText>
                   <ListItemIcon>
                     <Checkbox
-                      edge='end'
                       checked={selected[operator.key]}
                       tabIndex={-1}
                       disableRipple
                     />
                   </ListItemIcon>
+                  <ListItemText>
+                    <Typography fontSize={16} lineHeight={1.25}>
+                      {operator.title.en}
+                    </Typography>
+                  </ListItemText>
                 </ListItemButton>
               </ListItem>
               <Divider />

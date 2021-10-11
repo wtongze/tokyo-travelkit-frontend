@@ -198,6 +198,7 @@ export interface DirectionRoute {
   to: string;
   toTime: string;
   time: number;
+  searchTime: number;
   directions: (
     | RouteStartTransfer
     | RouteTrain

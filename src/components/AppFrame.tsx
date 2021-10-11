@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Typography,
   AppBar,
@@ -93,6 +93,19 @@ const getDefaultTabs = (path: string): TabItem[] => {
 function AppFrame(props: Props) {
   const location = useLocation();
 
+  const [innerHeight, setInnerHight] = useState<number>(window.innerHeight);
+
+  function reportWindowSize() {
+    setInnerHight(window.innerHeight);
+  };
+
+  useEffect(() => {
+    window.addEventListener('resize', reportWindowSize);
+    return () => {
+      window.removeEventListener('resize', reportWindowSize);
+    };
+  });
+
   const menuIndex =
     menuItems.findIndex((i) => location.pathname.startsWith(i.path)) || 0;
 
@@ -179,7 +192,7 @@ function AppFrame(props: Props) {
       <div
         className='content'
         style={{
-          height: `calc(${window.innerHeight}px - ${
+          height: `calc(${innerHeight}px - ${
             isMobile && !props.hideBottomNav ? '56px' : '0px'
           } - ${headerHeight}px - ${subMenus.length > 0 ? '48px' : '0px'})`,
           backgroundColor: props.backgroundColor

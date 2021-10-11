@@ -222,15 +222,16 @@ function DirectionPage() {
                 origin &&
                 destination &&
                 timeMode !== undefined &&
-                time !== undefined
+                time !== undefined &&
+                operatorPref
                   ? false
                   : true
               }
               onClick={() => {
                 if (origin && destination) {
                   const params: any = {
-                    mode: 'all',
                     calendar: calendar === 0 ? 'weekday' : 'saturdayHoliday',
+                    ...operatorPref,
                   };
                   if (timeMode === 0) {
                     params.fromTime = time.toTimeString().slice(0, 5);
