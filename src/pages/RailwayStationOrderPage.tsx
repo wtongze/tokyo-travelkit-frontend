@@ -11,7 +11,7 @@ import {
 } from '@mui/material';
 import { API } from '../api';
 import { ReduxProps, connect } from '../redux';
-import { RailwayInfo } from '../type';
+import { MultiLangObject, RailwayInfo } from '../type';
 import { useState, useEffect } from 'react';
 import { Train as TrainIcon } from '@mui/icons-material';
 import { sortBy } from 'lodash';
@@ -42,11 +42,20 @@ function RailwayStationOrderPage(props: Props & ReduxProps) {
     };
   });
 
+  const getText = (o?: MultiLangObject | null) => {
+    if (o) {
+      // @ts-ignore
+      return o[props.primaryLang] || o[props.secondaryLang] || '';
+    } else {
+      return '';
+    }
+  };
+
   return (
     <div className='railway-station-order-page'>
       <Container sx={{ padding: 4 }}>
         <Typography variant='h5' fontWeight={'medium'} sx={{ mb: 4 }}>
-          Railway Station Order
+          {getText({ en: 'Railway Station Order', 'zh-Hans': '线路站点顺序' })}
         </Typography>
         {railway ? (
           <div>
@@ -87,10 +96,10 @@ function RailwayStationOrderPage(props: Props & ReduxProps) {
                   fontSize={20}
                   lineHeight={1.25}
                 >
-                  {railway.title?.en}
+                  {getText(railway.title)}
                 </Typography>
                 <Typography fontSize={14} sx={{ mt: 1 }}>
-                  {railway.operatorTitle?.en}
+                  {getText(railway.operatorTitle)}
                 </Typography>
               </Grid>
             </Grid>
@@ -110,7 +119,7 @@ function RailwayStationOrderPage(props: Props & ReduxProps) {
                       sx={{ display: 'block', py: 2 }}
                     >
                       <Typography fontWeight={'medium'} sx={{ mt: 1 }}>
-                        {railwayDetailInfo.ascendingRailDirectionTitle?.en}
+                        {getText(railwayDetailInfo.ascendingRailDirectionTitle)}
                       </Typography>
                     </MenuItem>
                     <MenuItem
@@ -118,7 +127,9 @@ function RailwayStationOrderPage(props: Props & ReduxProps) {
                       sx={{ display: 'block', py: 2 }}
                     >
                       <Typography fontWeight={'medium'} sx={{ mt: 1 }}>
-                        {railwayDetailInfo.descendingRailDirectionTitle?.en}
+                        {getText(
+                          railwayDetailInfo.descendingRailDirectionTitle
+                        )}
                       </Typography>
                     </MenuItem>
                   </Select>
@@ -179,11 +190,11 @@ function RailwayStationOrderPage(props: Props & ReduxProps) {
                                     fontSize={20}
                                     lineHeight={1.25}
                                   >
-                                    {station.title?.en}
+                                    {getText(station.title)}
                                   </Typography>
                                   <Typography fontSize={14} sx={{ mt: 1 }}>
-                                    {station.operatorTitle?.en} -{' '}
-                                    {station.railwayTitle?.en}
+                                    {getText(station.operatorTitle)} -{' '}
+                                    {getText(station.railwayTitle)}
                                   </Typography>
                                 </Grid>
                               </Grid>
@@ -204,7 +215,7 @@ function RailwayStationOrderPage(props: Props & ReduxProps) {
                                   textAlign='left'
                                 >
                                   <Typography fontSize={20}>
-                                    {item.title?.en}
+                                    {getText(item.title)}
                                   </Typography>
                                 </Grid>
                               </Grid>
@@ -218,11 +229,20 @@ function RailwayStationOrderPage(props: Props & ReduxProps) {
                 </div>
               ) : (
                 <Alert severity='error' sx={{ mt: 4 }}>
-                  No station order available. Please check the offical website
-                  of {railwayDetailInfo.operatorTitle?.en}.
+                  {getText({
+                    en: 'No station order available.',
+                    'zh-Hans': '无法查询到此线路的站点信息',
+                  })}
                 </Alert>
               )
-            ) : null}
+            ) : (
+              <Alert severity='error' sx={{ mt: 4 }}>
+                {getText({
+                  en: 'No station order available.',
+                  'zh-Hans': '无法查询到此线路的站点信息',
+                })}
+              </Alert>
+            )}
           </div>
         ) : null}
       </Container>

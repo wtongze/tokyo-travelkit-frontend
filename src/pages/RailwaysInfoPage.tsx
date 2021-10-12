@@ -9,23 +9,36 @@ import {
 import { useState } from 'react';
 import { useHistory } from 'react-router';
 import RailwayPicker from '../components/RailwayPicker';
-import { RailwayItem } from '../type';
+import { MultiLangObject, RailwayItem } from '../type';
 import { ChevronRight as ChevronRightIcon } from '@mui/icons-material';
+import { connect, ReduxProps } from '../redux';
 
-function RailwaysInfoPage() {
+function RailwaysInfoPage(props: ReduxProps) {
   const history = useHistory();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const [railway, setRailway] = useState<RailwayItem>();
 
+  const getText = (o?: MultiLangObject | null) => {
+    if (o) {
+      // @ts-ignore
+      return o[props.primaryLang] || o[props.secondaryLang] || '';
+    } else {
+      return '';
+    }
+  };
+
   return (
     <div className='railway-info-page'>
       <Container sx={{ padding: 4 }}>
         <Typography variant='h5' fontWeight={'medium'}>
-          Railway Information
+          {getText({ en: 'Railway Information', 'zh-Hans': '线路信息' })}
         </Typography>
         <Typography variant='subtitle1'>
-          Check railway routes here...
+          {getText({
+            en: 'Check railway routes here...',
+            'zh-Hans': '在此查看线路相关信息',
+          })}
         </Typography>
         <Grid
           container
@@ -36,7 +49,7 @@ function RailwaysInfoPage() {
         >
           <Grid item>
             <Typography fontWeight={'medium'} fontSize={20}>
-              Railway
+              {getText({ en: 'Railway', 'zh-Hans': '线路' })}
             </Typography>
           </Grid>
           <Grid item>
@@ -47,7 +60,7 @@ function RailwaysInfoPage() {
                   setRailway(undefined);
                 }}
               >
-                Clear
+                {getText({ en: 'Clear', 'zh-Hans': '清空' })}
               </Button>
             ) : null}
           </Grid>
@@ -76,7 +89,7 @@ function RailwaysInfoPage() {
                 }
               }}
             >
-              Get Information
+              {getText({ en: 'Get Information', 'zh-Hans': '获取信息' })}
             </Button>
           </Grid>
         </Grid>
@@ -85,4 +98,4 @@ function RailwaysInfoPage() {
   );
 }
 
-export default RailwaysInfoPage;
+export default connect(RailwaysInfoPage);

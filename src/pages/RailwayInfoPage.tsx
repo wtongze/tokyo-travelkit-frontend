@@ -2,7 +2,6 @@ import { useHistory, useRouteMatch } from 'react-router';
 import { ChevronLeft as ChevronLeftIcon } from '@mui/icons-material';
 import AppFrame from '../components/AppFrame';
 import RailwayStationOrderPage from './RailwayStationOrderPage';
-import { ReduxProps, connect } from '../redux';
 
 const tabs = [
   {
@@ -14,7 +13,7 @@ const tabs = [
   },
 ];
 
-function RailwayInfoPage(props: ReduxProps) {
+function RailwayInfoPage() {
   const history = useHistory();
   const match = useRouteMatch<{
     railwayId: string;
@@ -39,4 +38,4 @@ function RailwayInfoPage(props: ReduxProps) {
   );
 }
 
-export default connect(RailwayInfoPage);
+export default RailwayInfoPage;

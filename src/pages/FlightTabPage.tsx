@@ -1,48 +1,40 @@
 import { Container, Typography } from '@mui/material';
-import React from 'react';
-import { RouteComponentProps, withRouter } from 'react-router';
 import AirportCard from '../components/AirportCard';
+import { connect, ReduxProps } from '../redux';
+import { MultiLangObject } from '../type';
 
-interface State {
-  flightNumber?: string;
-  airport?: string;
+function FlightTabPage(props: ReduxProps) {
+  const getText = (o?: MultiLangObject | null) => {
+    if (o) {
+      // @ts-ignore
+      return o[props.primaryLang] || o[props.secondaryLang] || '';
+    } else {
+      return '';
+    }
+  };
+
+  return (
+    <div className='flight-status-page' style={{ padding: 16 }}>
+      <Container sx={{ px: 0 }}>
+        <Typography variant='h5' fontWeight={500}>
+          {getText({ en: 'Flight Status', 'zh-Hans': '航班动态' })}
+        </Typography>
+        <Typography variant='subtitle1' sx={{ marginTop: 2 }}>
+          {getText({ en: 'Search by Airport', 'zh-Hans': '以机场搜索' })}
+        </Typography>
+        <AirportCard
+          code='NRT'
+          name='Narita'
+          sx={{ width: '100%', mt: 1 }}
+        ></AirportCard>
+        <AirportCard
+          code='HND'
+          name='Tokyo Haneda'
+          sx={{ width: '100%', mt: 2 }}
+        ></AirportCard>
+      </Container>
+    </div>
+  );
 }
 
-type Props = RouteComponentProps;
-
-class FlightTabPage extends React.Component<Props, State> {
-  constructor(props: Props) {
-    super(props);
-    this.state = {
-      flightNumber: undefined,
-      airport: undefined,
-    };
-  }
-
-  render() {
-    return (
-      <div className='flight-status-page' style={{ padding: 16 }}>
-        <Container sx={{ px: 0 }}>
-          <Typography variant='h5' fontWeight={500}>
-            Flight Status
-          </Typography>
-          <Typography variant='subtitle1' sx={{ marginTop: 2 }}>
-            Search by Airport
-          </Typography>
-          <AirportCard
-            code='NRT'
-            name='Narita'
-            sx={{ width: '100%', mt: 1 }}
-          ></AirportCard>
-          <AirportCard
-            code='HND'
-            name='Tokyo Haneda'
-            sx={{ width: '100%', mt: 2 }}
-          ></AirportCard>
-        </Container>
-      </div>
-    );
-  }
-}
-
-export default withRouter(FlightTabPage);
+export default connect(FlightTabPage);
