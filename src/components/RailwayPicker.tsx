@@ -59,10 +59,12 @@ function RailwayPicker(props: Props & ReduxProps) {
   });
   const fuse = new Fuse(source, {
     keys: [
-      `title.${props.primaryLang}`,
-      `title.${props.secondaryLang}`,
-      `operatorTitle.${props.primaryLang}`,
-      `operatorTitle.${props.secondaryLang}`,
+      'title.en',
+      'title.ja',
+      'title.zh-Hans',
+      'operatorTitle.en',
+      'operatorTitle.ja',
+      'operatorTitle.zh-Hans',
     ],
   });
 

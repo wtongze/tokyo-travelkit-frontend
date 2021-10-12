@@ -174,7 +174,7 @@ function TicketFarePage(props: ReduxProps) {
                                     en: 'Ticket Fare',
                                     'zh-Hans': '车票票价',
                                   })}
-                                  : <br /> {f.ticketFare}
+                                  : <br /> {`¥ ${f.ticketFare}`}
                                 </Typography>
                                 {f.icCardFare ? (
                                   <Typography sx={{ mt: 2 }}>
@@ -182,7 +182,7 @@ function TicketFarePage(props: ReduxProps) {
                                       en: 'IC Card Fare',
                                       'zh-Hans': 'IC 卡票价',
                                     })}
-                                    : <br /> {f.icCardFare || '-'}
+                                    : <br /> {`¥ ${f.icCardFare}` || '-'}
                                   </Typography>
                                 ) : null}
                               </Grid>
@@ -199,7 +199,7 @@ function TicketFarePage(props: ReduxProps) {
                                     en: 'Ticket Fare',
                                     'zh-Hans': '车票票价',
                                   })}
-                                  : <br /> {f.childTicketFare || '-'}
+                                  : <br /> {`¥ ${f.childTicketFare}` || '-'}
                                 </Typography>
                                 {f.icCardFare ? (
                                   <Typography sx={{ mt: 2 }}>
@@ -207,7 +207,7 @@ function TicketFarePage(props: ReduxProps) {
                                       en: 'IC Card Fare',
                                       'zh-Hans': 'IC 卡票价',
                                     })}
-                                    : <br /> {f.childIcCardFare || '-'}
+                                    : <br /> {`¥ ${f.childIcCardFare}` || '-'}
                                   </Typography>
                                 ) : null}
                               </Grid>

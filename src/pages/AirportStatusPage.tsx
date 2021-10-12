@@ -73,25 +73,45 @@ function AirportStatusPage(props: ReduxProps) {
 
   useEffect(() => {
     let subscribe = true;
+    let intervalId: any;
 
     if (direction === 'departure') {
       API.getDepartureInformation(airportCode, terminal).then((data) => {
-        if (subscribe) {
+        if (data && subscribe) {
           setFlights(data);
           setLoading(false);
+
+          intervalId = setInterval(() => {
+            API.getDepartureInformation(airportCode, terminal).then((data) => {
+              if (data && subscribe) {
+                setFlights(data);
+              }
+            });
+          }, 2 * 60 * 1000);
         }
       });
     } else {
       API.getArrivalInformation(airportCode, terminal).then((data) => {
-        if (subscribe) {
+        if (data && subscribe) {
           setFlights(data);
           setLoading(false);
+
+          intervalId = setInterval(() => {
+            API.getArrivalInformation(airportCode, terminal).then((data) => {
+              if (data && subscribe) {
+                setFlights(data);
+              }
+            });
+          }, 2 * 60 * 1000);
         }
       });
     }
 
     return () => {
       subscribe = false;
+      if (intervalId) {
+        clearInterval(intervalId)
+      }
     };
   }, [airportCode, direction, terminal]);
 

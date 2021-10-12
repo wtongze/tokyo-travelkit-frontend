@@ -61,12 +61,15 @@ function StationPicker(props: Props & ReduxProps) {
   const fuse = new Fuse(source, {
     keys: [
       'stationCode',
-      `title.${props.primaryLang}`,
-      `title.${props.secondaryLang}`,
-      `operatorTitle.${props.primaryLang}`,
-      `operatorTitle.${props.secondaryLang}`,
-      `railwayTitle.${props.primaryLang}`,
-      `railwayTitle.${props.secondaryLang}`,
+      'title.en',
+      'title.ja',
+      'title.zh-Hans',
+      'operatorTitle.en',
+      'operatorTitle.ja',
+      'operatorTitle.zh-Hans',
+      'railwayTitle.en',
+      'railwayTitle.ja',
+      'railwayTitle.zh-Hans',
     ],
   });
 

@@ -34,29 +34,51 @@ function FlightStatusPage(props: ReduxProps) {
     DepartureInformationItem | ArrivalInformationItem
   >();
 
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     let subscribe = true;
-
-    const setData = (
-      data: DepartureInformationItem | ArrivalInformationItem | undefined
-    ) => {
-      if (data !== undefined && subscribe) {
-        setFlightInfo(data);
-      }
-    };
+    let intervalId: any;
 
     if (flightInfo === undefined) {
       if (direction === 'departure') {
-        API.getDepartureFlightInformation(flightId).then(setData);
+        API.getDepartureFlightInformation(flightId).then((data) => {
+          if (data && subscribe) {
+            setFlightInfo(data);
+            setLoading(false);
+            intervalId = setInterval(() => {
+              API.getDepartureFlightInformation(flightId).then((data) => {
+                if (data && subscribe) {
+                  setFlightInfo(data);
+                }
+              });
+            }, 2 * 60 * 1000);
+          }
+        });
       } else {
-        API.getArrivalFlightInformation(flightId).then(setData);
+        API.getArrivalFlightInformation(flightId).then((data) => {
+          if (data && subscribe) {
+            setFlightInfo(data);
+            setLoading(false);
+            intervalId = setInterval(() => {
+              API.getArrivalFlightInformation(flightId).then((data) => {
+                if (data && subscribe) {
+                  setFlightInfo(data);
+                }
+              });
+            }, 2 * 60 * 1000);
+          }
+        });
       }
     }
 
     return () => {
       subscribe = false;
+      if (intervalId) {
+        clearInterval(intervalId);
+      }
     };
-  });
+  }, [direction, flightId, flightInfo, loading]);
 
   const getText = (o?: MultiLangObject | null) => {
     if (o) {
@@ -93,17 +115,19 @@ function FlightStatusPage(props: ReduxProps) {
                   </Typography>
                 </Grid>
                 <Grid>
-                  <Chip
-                    size='small'
-                    sx={{
-                      borderRadius: '6px',
-                      fontWeight: 'medium',
-                      fontSize: '1rem',
-                      color: 'white',
-                    }}
-                    label={getText(flightInfo.flightStatus?.title)}
-                    color={'info'}
-                  ></Chip>
+                  {flightInfo.flightStatus ? (
+                    <Chip
+                      size='small'
+                      sx={{
+                        borderRadius: '6px',
+                        fontWeight: 'medium',
+                        fontSize: '1rem',
+                        color: 'white',
+                      }}
+                      label={getText(flightInfo.flightStatus?.title)}
+                      color={'info'}
+                    ></Chip>
+                  ) : null}
                 </Grid>
               </Grid>
               {flightInfo.flightNumber.slice(1).length > 0 ? (
@@ -333,11 +357,11 @@ function FlightStatusPage(props: ReduxProps) {
                     );
                   })()}
             </CardContent>
-          ) : (
+          ) : loading ? (
             <CardContent>
               <Skeleton />
             </CardContent>
-          )}
+          ) : null}
         </Card>
       </Container>
     </AppFrame>

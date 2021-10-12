@@ -15,33 +15,33 @@ interface Action {
 }
 
 // Interface language
-const primaryLangMap = {
-  en: 'en',
-  'zh-CN': 'zh-Hans',
-  // zh: 'zh-Hant',
-  // ko: 'ko',
-  // jp: 'jp',
-};
+// const primaryLangMap = {
+//   en: 'en',
+//   'zh-CN': 'zh-Hans',
+//   // zh: 'zh-Hant',
+//   // ko: 'ko',
+//   // jp: 'jp',
+// };
 
-let primaryKey = navigator.languages.find((l) => l in primaryLangMap) || 'en';
-//@ts-ignore
-let primaryLang = primaryLangMap[primaryKey];
+// let primaryKey = navigator.languages.find((l) => l in primaryLangMap) || 'en';
+// //@ts-ignore
+// let primaryLang = primaryLangMap[primaryKey];
 
-// Fallback language
-const secondaryLangMap = {
-  en: 'en',
-  jp: 'jp',
-};
+// // Fallback language
+// const secondaryLangMap = {
+//   en: 'en',
+//   jp: 'jp',
+// };
 
-let secondaryKey =
-  navigator.languages.find((l) => l in secondaryLangMap) || 'en';
-// @ts-ignore
-let secondaryLang = secondaryLangMap[secondaryKey];
+// let secondaryKey =
+//   navigator.languages.find((l) => l in secondaryLangMap) || 'en';
+// // @ts-ignore
+// let secondaryLang = secondaryLangMap[secondaryKey];
 
 const langReducer: Reducer<State, Action> = function (
   state = {
-    primaryLang,
-    secondaryLang,
+    primaryLang: 'en',
+    secondaryLang: 'en',
     stations: [],
     railways: [],
   },
