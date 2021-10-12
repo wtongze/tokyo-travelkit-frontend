@@ -22,6 +22,7 @@ import { TransitionProps } from '@mui/material/transitions';
 import { Close as CloseIcon } from '@mui/icons-material';
 import React, { useState } from 'react';
 import { MultiLangObject } from '../type';
+import { connect, ReduxProps } from '../redux';
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {
@@ -85,7 +86,7 @@ interface Props {
   onChange?: (OperatorPreference: OperatorPreference) => void;
 }
 
-function OperatorPicker(props: Props) {
+function OperatorPicker(props: Props & ReduxProps) {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
@@ -111,6 +112,15 @@ function OperatorPicker(props: Props) {
     return counter;
   };
 
+  const getText = (o?: MultiLangObject) => {
+    if (o) {
+      // @ts-ignore
+      return o[props.primaryLang] || o[props.secondaryLang] || '';
+    } else {
+      return '';
+    }
+  };
+
   return (
     <div className='railway-picker'>
       <ButtonBase
@@ -124,10 +134,16 @@ function OperatorPicker(props: Props) {
         }}
         onClick={handleClickOpen}
       >
-        <Typography sx={{ mt: 1 }}>
-          {countOperator(selected)} operator
-          {countOperator(selected) > 1 ? 's' : null} selected
-        </Typography>
+        {props.primaryLang === 'en' ? (
+          <Typography sx={{ mt: 1 }}>
+            {countOperator(selected)} operator
+            {countOperator(selected) > 1 ? 's' : null} selected
+          </Typography>
+        ) : (
+          <Typography sx={{ mt: 1 }}>
+            已选择 {countOperator(selected)} 个运营公司
+          </Typography>
+        )}
       </ButtonBase>
       <Dialog
         fullScreen={isMobile}
@@ -152,7 +168,7 @@ function OperatorPicker(props: Props) {
               component='div'
               lineHeight={1.25}
             >
-              Select Operator
+              {getText({ en: 'Select Operator', 'zh-Hans': '选择运营公司' })}
             </Typography>
             <Button
               color='inherit'
@@ -194,7 +210,7 @@ function OperatorPicker(props: Props) {
                   </ListItemIcon>
                   <ListItemText>
                     <Typography fontSize={16} lineHeight={1.25}>
-                      {operator.title.en}
+                      {getText(operator.title)}
                     </Typography>
                   </ListItemText>
                 </ListItemButton>
@@ -208,4 +224,4 @@ function OperatorPicker(props: Props) {
   );
 }
 
-export default OperatorPicker;
+export default connect(OperatorPicker);

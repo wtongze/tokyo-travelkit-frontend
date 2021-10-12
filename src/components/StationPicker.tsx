@@ -25,7 +25,7 @@ import React, { useState } from 'react';
 import Fuse from 'fuse.js';
 import { connect, ReduxProps } from '../redux';
 import { API } from '../api';
-import { StationItem } from '../type';
+import { MultiLangObject, StationItem } from '../type';
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {
@@ -37,7 +37,7 @@ const Transition = React.forwardRef(function Transition(
 });
 
 interface Props {
-  title: string;
+  title: MultiLangObject;
   operator?: string[];
   disable?: boolean;
   value?: StationItem;
@@ -59,7 +59,15 @@ function StationPicker(props: Props & ReduxProps) {
     }
   });
   const fuse = new Fuse(source, {
-    keys: ['stationCode', 'title.en', 'operatorTitle.en', 'railwayTitle.en'],
+    keys: [
+      'stationCode',
+      `title.${props.primaryLang}`,
+      `title.${props.secondaryLang}`,
+      `operatorTitle.${props.primaryLang}`,
+      `operatorTitle.${props.secondaryLang}`,
+      `railwayTitle.${props.primaryLang}`,
+      `railwayTitle.${props.secondaryLang}`,
+    ],
   });
 
   const list = filter === '' ? source : fuse.search(filter).map((i) => i.item);
@@ -76,6 +84,15 @@ function StationPicker(props: Props & ReduxProps) {
 
   const handleClose = () => {
     setOpen(false);
+  };
+
+  const getText = (o?: MultiLangObject): string => {
+    if (o) {
+      // @ts-ignore
+      return o[props.primaryLang] || o[props.secondaryLang] || '';
+    } else {
+      return '';
+    }
   };
 
   return (
@@ -116,10 +133,11 @@ function StationPicker(props: Props & ReduxProps) {
             </Grid>
             <Grid item xs={10} sx={{ px: 4 }} textAlign='left'>
               <Typography fontWeight={'medium'} fontSize={20} lineHeight={1.25}>
-                {selected.title?.en}
+                {getText(selected.title)}
               </Typography>
               <Typography fontSize={14} sx={{ mt: 1 }}>
-                {selected.operatorTitle?.en} - {selected.railwayTitle?.en}
+                {getText(selected.operatorTitle)} -{' '}
+                {getText(selected.railwayTitle)}
               </Typography>
             </Grid>
           </Grid>
@@ -131,7 +149,9 @@ function StationPicker(props: Props & ReduxProps) {
               />
             </Grid>
             <Grid item xs={10} sx={{ px: 4 }} textAlign='left'>
-              <Typography fontSize={20}>Select a station...</Typography>
+              <Typography fontSize={20}>
+                {getText({ en: 'Select a station...', 'zh-Hans': '选择车站' })}
+              </Typography>
             </Grid>
           </Grid>
         )}
@@ -154,7 +174,7 @@ function StationPicker(props: Props & ReduxProps) {
               <CloseIcon />
             </IconButton>
             <Typography sx={{ ml: 2, flex: 1 }} variant='h6' component='div'>
-              {props.title}
+              {getText(props.title)}
             </Typography>
           </Toolbar>
         </AppBar>
@@ -179,7 +199,10 @@ function StationPicker(props: Props & ReduxProps) {
           onChange={(e) => {
             setFilter(e.target.value);
           }}
-          placeholder={'Station Code / Name'}
+          placeholder={getText({
+            en: 'Station Code / Name',
+            'zh-Hans': '车站代号或名称',
+          })}
         ></TextField>
         <List>
           {list.slice(0, limit).map((station, index) => (
@@ -223,10 +246,11 @@ function StationPicker(props: Props & ReduxProps) {
                       fontSize={20}
                       lineHeight={1.25}
                     >
-                      {station.title?.en}
+                      {getText(station.title)}
                     </Typography>
                     <Typography fontSize={14} sx={{ mt: 1 }}>
-                      {station.operatorTitle?.en} - {station.railwayTitle?.en}
+                      {getText(station.operatorTitle)} -{' '}
+                      {getText(station.railwayTitle)}
                     </Typography>
                   </Grid>
                 </Grid>
@@ -245,7 +269,7 @@ function StationPicker(props: Props & ReduxProps) {
                     fontSize='20'
                     sx={{ width: '100%' }}
                   >
-                    Load More...
+                    {getText({ en: 'Load More...', 'zh-Hans': '加载更多' })}
                   </Typography>
                 </ListItem>
               ) : null}

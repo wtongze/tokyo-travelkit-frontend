@@ -69,7 +69,7 @@ function StationsInfoPage() {
         </Grid>
         <div style={{ margin: isMobile ? '0 -16px' : undefined }}>
           <StationPicker
-            title={'Select Station'}
+            title={{ en: 'Select Station', 'zh-Hans': '选择车站' }}
             value={station}
             onChange={(o) => {
               setStation(o);
@@ -86,7 +86,9 @@ function StationsInfoPage() {
               disabled={station ? false : true}
               onClick={() => {
                 if (station) {
-                  history.push(`/stations/station-info/${station.id}/timetable`);
+                  history.push(
+                    `/stations/station-info/${station.id}/timetable`
+                  );
                 }
               }}
             >

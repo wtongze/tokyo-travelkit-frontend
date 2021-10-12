@@ -89,7 +89,7 @@ function DirectionPage() {
         </Grid>
         <div style={{ margin: isMobile ? '0 -16px' : undefined }}>
           <StationPicker
-            title={'Select Origin Station'}
+            title={{ en: 'Select Origin Station', 'zh-Hans': '选择出发车站' }}
             value={origin}
             onChange={(o) => {
               setOrigin(o);
@@ -124,7 +124,10 @@ function DirectionPage() {
         </Grid>
         <div style={{ margin: isMobile ? '0 -16px' : undefined }}>
           <StationPicker
-            title={'Select Destination Station'}
+            title={{
+              en: 'Select Destination Station',
+              'zh-Hans': '选择到达车站',
+            }}
             value={destination}
             onChange={(o) => {
               setDestination(o);

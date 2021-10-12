@@ -54,7 +54,7 @@ function RailwaysInfoPage() {
         </Grid>
         <div style={{ margin: isMobile ? '0 -16px' : undefined }}>
           <RailwayPicker
-            title={'Select Railway'}
+            title={{ en: 'Select Railway', 'zh-Hans': '选择线路' }}
             value={railway}
             onChange={(o) => {
               setRailway(o);
@@ -70,7 +70,9 @@ function RailwaysInfoPage() {
               disabled={railway ? false : true}
               onClick={() => {
                 if (railway) {
-                  history.push(`/stations/railway-info/${railway.id}/station-order`);
+                  history.push(
+                    `/stations/railway-info/${railway.id}/station-order`
+                  );
                 }
               }}
             >

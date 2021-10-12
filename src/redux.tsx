@@ -23,13 +23,9 @@ const primaryLangMap = {
   // jp: 'jp',
 };
 
-let primaryLang = 'en';
-navigator.languages.forEach((l) => {
-  if (l in primaryLangMap) {
-    // @ts-ignore
-    primaryLang = primaryLangMap[l];
-  }
-});
+let primaryKey = navigator.languages.find((l) => l in primaryLangMap) || 'en';
+//@ts-ignore
+let primaryLang = primaryLangMap[primaryKey];
 
 // Fallback language
 const secondaryLangMap = {
@@ -37,13 +33,10 @@ const secondaryLangMap = {
   jp: 'jp',
 };
 
-let secondaryLang = 'en';
-navigator.languages.forEach((l) => {
-  if (l in secondaryLangMap) {
-    // @ts-ignore
-    secondaryLang = secondaryLangMap[l];
-  }
-});
+let secondaryKey =
+  navigator.languages.find((l) => l in secondaryLangMap) || 'en';
+// @ts-ignore
+let secondaryLang = secondaryLangMap[secondaryKey];
 
 const langReducer: Reducer<State, Action> = function (
   state = {

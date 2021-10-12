@@ -29,6 +29,7 @@ import {
 import { useHistory, useLocation } from 'react-router';
 import { TransitionProps } from '@mui/material/transitions';
 import { connect, ReduxProps } from '../redux';
+import { MultiLangObject } from '../type';
 
 interface TabItem {
   label: string;
@@ -48,22 +49,34 @@ interface Props {
 
 const menuItems = [
   {
-    label: 'Direction',
+    label: {
+      en: 'Direction',
+      'zh-Hans': '路径',
+    },
     icon: <DirectionsIcon />,
     path: '/direction',
   },
   {
-    label: 'Stations',
+    label: {
+      en: 'Stations',
+      'zh-Hans': '站点',
+    },
     icon: <TrainIcon />,
     path: '/stations',
   },
   {
-    label: 'Ticket',
+    label: {
+      en: 'Ticket',
+      'zh-Hans': '票务',
+    },
     icon: <TicketIcon />,
     path: '/ticket',
   },
   {
-    label: 'Flight',
+    label: {
+      en: 'Flight',
+      'zh-Hans': '航班',
+    },
     icon: <FlightIcon />,
     path: '/flight',
   },
@@ -183,6 +196,15 @@ function AppFrame(props: Props & ReduxProps) {
     props.secondaryLang
   );
 
+  const getText = (o?: MultiLangObject) => {
+    if (o) {
+      // @ts-ignore
+      return o[props.primaryLang] || o[props.secondaryLang] || '';
+    } else {
+      return '';
+    }
+  };
+
   return (
     <div className='app-frame'>
       <AppBar position='relative' sx={{ flexWrap: 'wrap' }}>
@@ -209,7 +231,7 @@ function AppFrame(props: Props & ReduxProps) {
                   sx={{ mr: 2, px: 4 }}
                   onClick={() => history.push(i.path)}
                 >
-                  {i.label}
+                  {getText(i.label)}
                 </Button>
               ))}
 
@@ -265,10 +287,10 @@ function AppFrame(props: Props & ReduxProps) {
           <BottomNavigation showLabels value={menuIndex}>
             {menuItems.map((i) => (
               <BottomNavigationAction
-                label={i.label}
+                label={getText(i.label)}
                 icon={i.icon}
                 onClick={() => history.push(i.path)}
-                key={i.label}
+                key={i.label.en}
               />
             ))}
           </BottomNavigation>
@@ -291,7 +313,7 @@ function AppFrame(props: Props & ReduxProps) {
               <CloseIcon />
             </IconButton>
             <Typography sx={{ ml: 2, flex: 1 }} variant='h6' component='div'>
-              Language
+              {getText({ en: 'Language', 'zh-Hans': '语言' })}
             </Typography>
             <Button
               autoFocus
@@ -311,7 +333,9 @@ function AppFrame(props: Props & ReduxProps) {
           </Toolbar>
         </AppBar>
         <Grid sx={{ padding: 4 }}>
-          <Typography sx={{ mb: 2 }}>Primary Language</Typography>
+          <Typography sx={{ mb: 2 }}>
+            {getText({ en: 'Primary Language', 'zh-Hans': '首选语言' })}
+          </Typography>
           <Select
             fullWidth
             value={tempPrimaryLang}
@@ -327,7 +351,9 @@ function AppFrame(props: Props & ReduxProps) {
               </MenuItem>
             ))}
           </Select>
-          <Typography sx={{ mt: 4, mb: 2 }}>Secondary Language</Typography>
+          <Typography sx={{ mt: 4, mb: 2 }}>
+            {getText({ en: 'Secondary Language', 'zh-Hans': '备选语言' })}
+          </Typography>
           <Select
             fullWidth
             value={tempSecondaryLang}

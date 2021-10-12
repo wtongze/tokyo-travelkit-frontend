@@ -68,7 +68,7 @@ function TicketCalculatorPage() {
         </Grid>
         <div style={{ margin: isMobile ? '0 -16px' : undefined }}>
           <StationPicker
-            title={'Select Origin'}
+            title={{ en: 'Select Origin', 'zh-Hans': '选择出发车站' }}
             value={origin}
             operator={
               destination ? [destination.operator] : operatorWithFareInfo
@@ -107,7 +107,7 @@ function TicketCalculatorPage() {
 
         <div style={{ margin: isMobile ? '0 -16px' : undefined }}>
           <StationPicker
-            title={'Select Destination'}
+            title={{ en: 'Select Destination', 'zh-Hans': '选择到达车站' }}
             operator={origin ? [origin.operator] : operatorWithFareInfo}
             value={destination}
             onChange={(d) => {
