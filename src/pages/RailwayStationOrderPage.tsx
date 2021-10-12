@@ -1,7 +1,6 @@
 import {
   Typography,
   Container,
-  Alert,
   Divider,
   Grid,
   List,
@@ -227,22 +226,8 @@ function RailwayStationOrderPage(props: Props & ReduxProps) {
                     })}
                   </List>
                 </div>
-              ) : (
-                <Alert severity='error' sx={{ mt: 4 }}>
-                  {getText({
-                    en: 'No station order available.',
-                    'zh-Hans': '无法查询到此线路的站点信息',
-                  })}
-                </Alert>
-              )
-            ) : (
-              <Alert severity='error' sx={{ mt: 4 }}>
-                {getText({
-                  en: 'No station order available.',
-                  'zh-Hans': '无法查询到此线路的站点信息',
-                })}
-              </Alert>
-            )}
+              ) : null
+            ) : null}
           </div>
         ) : null}
       </Container>

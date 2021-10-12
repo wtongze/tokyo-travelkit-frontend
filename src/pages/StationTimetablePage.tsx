@@ -1,5 +1,4 @@
 import {
-  Alert,
   Chip,
   Container,
   Divider,
@@ -114,7 +113,10 @@ function StationTimetablePage(props: Props & ReduxProps) {
                   <Select
                     sx={{ mt: '16px', backgroundColor: 'white' }}
                     value={selected}
-                    onChange={(e) => setSelected(e.target.value)}
+                    onChange={(e) => {
+                      setTimetable(undefined);
+                      setSelected(e.target.value);
+                    }}
                     fullWidth
                     size='small'
                   >
@@ -161,7 +163,6 @@ function StationTimetablePage(props: Props & ReduxProps) {
                                       label={getText(item.trainTypeTitle)}
                                       size='small'
                                       sx={{ borderRadius: 1 }}
-                                      color='info'
                                     />
                                     {item.trainName ? (
                                       <Typography>
@@ -238,14 +239,7 @@ function StationTimetablePage(props: Props & ReduxProps) {
                     </List>
                   ) : null}
                 </div>
-              ) : (
-                <Alert severity='error' sx={{ mt: 4 }}>
-                  {getText({
-                    en: 'No timetable available.',
-                    'zh-Hans': '未找到时刻表。',
-                  })}
-                </Alert>
-              )
+              ) : null
             ) : null}
           </div>
         ) : null}
