@@ -14,7 +14,7 @@ import {
   Alert,
 } from '@mui/material';
 import { useEffect, useState } from 'react';
-import { DirectionRoute } from '../type';
+import { DirectionRoute, MultiLangObject } from '../type';
 import { connect, ReduxProps } from '../redux';
 import { API } from '../api';
 
@@ -26,6 +26,15 @@ function RoutePage(props: ReduxProps) {
   const [hideList, setHideList] = useState<boolean[][]>([]);
 
   const { origin, destination } = params;
+
+  const getText = (o?: MultiLangObject | null) => {
+    if (o) {
+      // @ts-ignore
+      return o[props.primaryLang] || o[props.secondaryLang] || '';
+    } else {
+      return '';
+    }
+  };
 
   useEffect(() => {
     let subscribe = true;
@@ -102,7 +111,9 @@ function RoutePage(props: ReduxProps) {
         backgroundColor={'#f1f3f5'}
       >
         <Container sx={{ padding: 4 }}>
-          <Typography variant='h5'>Route Page</Typography>
+          <Typography variant='h5'>
+            {getText({ en: 'Route Page', 'zh-Hans': '路线界面' })}
+          </Typography>
           {(() => {
             if (route && route.time >= 0) {
               const hour = parseInt((route.time / 60).toString());
@@ -112,17 +123,21 @@ function RoutePage(props: ReduxProps) {
               return (
                 <div>
                   <Typography fontSize={14} sx={{ mt: 1 }}>
-                    Search took {searchTime.toFixed(4)} second
-                    {searchTime > 1 ? 's' : ''}.
+                    {getText({ en: 'Search took', 'zh-Hans': '搜索花费了' })}{' '}
+                    {searchTime.toFixed(4)}{' '}
+                    {getText({ en: 'second', 'zh-Hans': '秒' })}
+                    {props.primaryLang === 'en' && searchTime > 1 ? 's' : ''}.
                   </Typography>
                   <Typography
                     fontSize={20}
                     fontWeight={'medium'}
                     sx={{ mt: 4 }}
                   >
-                    Total:{' '}
-                    {`${hour} hour${hour > 1 ? 's' : ''} ${min} min${
-                      min > 1 ? 's' : ''
+                    {getText({ en: 'Total:', 'zh-Hans': '共需要' })}{' '}
+                    {`${hour} ${getText({ en: 'hour', 'zh-Hans': '小时' })}${
+                      props.primaryLang === 'en' && hour > 1 ? 's' : ''
+                    } ${min} ${getText({ en: 'min', 'zh-Hans': '分钟' })}${
+                      props.primaryLang === 'en' && min > 1 ? 's' : ''
                     }`}
                   </Typography>
                 </div>
@@ -166,7 +181,7 @@ function RoutePage(props: ReduxProps) {
                         {station ? (
                           <div>
                             <Typography fontWeight={'bold'} fontSize={20}>
-                              {station.title?.en}
+                              {getText(station.title)}
                             </Typography>
                             {station.hasStationIcon ? (
                               <img
@@ -196,9 +211,12 @@ function RoutePage(props: ReduxProps) {
                               // @ts-ignore
                               nextStep.from === r.from
                             ) {
-                              return 'Wait';
+                              return getText({ en: 'Wait', 'zh-Hans': '等待' });
                             } else {
-                              return 'Transfer';
+                              return getText({
+                                en: 'Transfer',
+                                'zh-Hans': '换乘',
+                              });
                             }
                           })()}
                         </Typography>
@@ -239,7 +257,7 @@ function RoutePage(props: ReduxProps) {
                         {fromStation ? (
                           <div>
                             <Typography fontWeight={'bold'} fontSize={20}>
-                              {fromStation.title?.en}
+                              {getText(fromStation.title)}
                             </Typography>
                             {fromStation.hasStationIcon ? (
                               <img
@@ -272,7 +290,7 @@ function RoutePage(props: ReduxProps) {
                       </Grid>
                       <Grid item xs={9} sx={{ px: 4, pt: 2, pb: 4 }}>
                         <Chip
-                          label={r.trainTimetable.trainTypeTitle?.en}
+                          label={getText(r.trainTimetable.trainTypeTitle)}
                           size='small'
                           sx={{
                             borderRadius: 1,
@@ -281,20 +299,23 @@ function RoutePage(props: ReduxProps) {
                           }}
                         />
                         <Typography sx={{ mt: 1 }} fontSize={14}>
-                          {r.trainTimetable.railDirectionTitle?.en}
+                          {getText(r.trainTimetable.railDirectionTitle)}
                         </Typography>
                         <Typography fontWeight={'bold'} fontSize={18}>
-                          For{' '}
                           {(() => {
                             if (r.trainTimetable.destinationStation) {
                               const destinations =
                                 r.trainTimetable.destinationStation.map((s) =>
                                   props.stations.find((k) => k.id === s)
                                 );
-                              return destinations
+                              const str = destinations
                                 .filter((i) => i !== undefined)
-                                .map((i) => i?.title?.en)
+                                .map((i) => getText(i?.title))
                                 .join(' / ');
+                              return `${getText({
+                                en: 'For ',
+                                'zh-Hans': '往 ',
+                              })}${str}`;
                             } else {
                               return null;
                             }
@@ -361,7 +382,15 @@ function RoutePage(props: ReduxProps) {
                                       setHideList(tempList);
                                     }}
                                   >
-                                    {hide ? 'Show More' : 'Show Less'}
+                                    {hide
+                                      ? getText({
+                                          en: 'Show More',
+                                          'zh-Hans': '展开',
+                                        })
+                                      : getText({
+                                          en: 'Show Less',
+                                          'zh-Hans': '隐藏',
+                                        })}
                                   </Button>
                                 </Grid>
                               </Grid>
@@ -381,7 +410,9 @@ function RoutePage(props: ReduxProps) {
                                   ></div>
                                 </Grid>
                                 <Grid item xs={9} sx={{ px: 4, py: 3 }}>
-                                  <Typography>{stop?.title?.en}</Typography>
+                                  <Typography>
+                                    {getText(stop?.title)}
+                                  </Typography>
                                   {stop?.hasStationIcon ? (
                                     <img
                                       src={API.getStationIconPath(stop?.id)}
@@ -426,10 +457,20 @@ function RoutePage(props: ReduxProps) {
                                 </Grid>
                                 <Grid item xs={9} sx={{ px: 4, py: 3 }}>
                                   {vNextRailway ? (
-                                    <Typography>
-                                      Direct service to {vNextRailway.title?.en}{' '}
-                                      via {stop?.title?.en}
-                                    </Typography>
+                                    props.primaryLang === 'en' ? (
+                                      <Typography>
+                                        Direct service to{' '}
+                                        {getText(vNextRailway.title)}
+                                        <br />
+                                        (via {getText(stop?.title)})
+                                      </Typography>
+                                    ) : (
+                                      <Typography>
+                                        直通运行至 {getText(vNextRailway.title)}
+                                        <br />
+                                        (经由 {getText(stop?.title)})
+                                      </Typography>
+                                    )
                                   ) : null}
                                 </Grid>
                               </Grid>
@@ -464,7 +505,7 @@ function RoutePage(props: ReduxProps) {
                         {toStation ? (
                           <div>
                             <Typography fontWeight={'bold'} fontSize={20}>
-                              {toStation.title?.en}
+                              {getText(toStation.title)}
                             </Typography>
                             {toStation.hasStationIcon ? (
                               <img
@@ -507,7 +548,7 @@ function RoutePage(props: ReduxProps) {
                           fontSize={18}
                           sx={{ my: 6 }}
                         >
-                          Transfer
+                          {getText({ en: 'Transfer', 'zh-Hans': '换乘' })}
                         </Typography>
                       </Grid>
                     </Grid>
@@ -557,16 +598,19 @@ function RoutePage(props: ReduxProps) {
                               // @ts-ignore
                               nextStep.to === r.to
                             ) {
-                              return 'Wait';
+                              return getText({ en: 'Wait', 'zh-Hans': '等待' });
                             } else {
-                              return 'Transfer';
+                              return getText({
+                                en: 'Transfer',
+                                'zh-Hans': '换乘',
+                              });
                             }
                           })()}
                         </Typography>
                         {station ? (
                           <div>
                             <Typography fontWeight={'bold'} fontSize={20}>
-                              {station.title?.en}
+                              {getText(station.title)}
                             </Typography>
                             {station.hasStationIcon ? (
                               <img
@@ -594,8 +638,10 @@ function RoutePage(props: ReduxProps) {
           ) : (
             <Alert severity='error' sx={{ mt: 4 }}>
               <Typography>
-                Route not found. Please refine the search parameter and try
-                again.
+                {getText({
+                  en: 'Route not found. Please change the search parameter and try again.',
+                  'zh-Hans': '无法找到路线。请改变搜索参数后重试。',
+                })}
               </Typography>
             </Alert>
           )}
