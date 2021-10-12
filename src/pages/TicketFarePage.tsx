@@ -39,7 +39,7 @@ function TicketFarePage(props: ReduxProps) {
     <div className='ticket-fare-page'>
       <AppFrame
         hideBottomNav
-        title={'Ticket Fare Information'}
+        title={{ en: 'Ticket Fare Information', 'zh-Hans': '票价信息' }}
         prevIcon={<ChevronLeftIcon />}
         onPrev={() => history.push('/ticket/calculator')}
         tabs={[]}

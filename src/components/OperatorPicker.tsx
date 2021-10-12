@@ -112,7 +112,7 @@ function OperatorPicker(props: Props & ReduxProps) {
     return counter;
   };
 
-  const getText = (o?: MultiLangObject) => {
+  const getText = (o?: MultiLangObject | null) => {
     if (o) {
       // @ts-ignore
       return o[props.primaryLang] || o[props.secondaryLang] || '';

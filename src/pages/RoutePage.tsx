@@ -94,7 +94,7 @@ function RoutePage(props: ReduxProps) {
     <div className='route-page'>
       <AppFrame
         hideBottomNav
-        title={'Routes'}
+        title={{ en: 'Routes', 'zh-Hans': '路线' }}
         prevIcon={<ChevronLeftIcon />}
         onPrev={() => {
           history.push('/direction');

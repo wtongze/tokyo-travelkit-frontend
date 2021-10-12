@@ -23,20 +23,29 @@ import {
 import { useEffect, useState } from 'react';
 import { connect, ReduxProps } from '../redux';
 import { API } from '../api';
-import { DepartureInformationItem, ArrivalInformationItem } from '../type';
+import {
+  DepartureInformationItem,
+  ArrivalInformationItem,
+  MultiLangObject,
+} from '../type';
 import { AIRPORT_INFO } from '../const';
 
 const tabs = [
   {
-    label: 'Departure',
+    label: {
+      en: 'Departure',
+      'zh-Hans': '出发',
+    },
     match: 'departure',
   },
   {
-    label: 'Arrival',
+    label: {
+      en: 'Arrival',
+      'zh-Hans': '到达',
+    },
     match: 'arrival',
   },
 ];
-
 
 function AirportStatusPage(props: ReduxProps) {
   const match = useRouteMatch<{
@@ -89,6 +98,15 @@ function AirportStatusPage(props: ReduxProps) {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
+  const getText = (o?: MultiLangObject | null) => {
+    if (o) {
+      // @ts-ignore
+      return o[props.primaryLang] || o[props.secondaryLang] || '';
+    } else {
+      return '';
+    }
+  };
+
   return (
     <AppFrame
       hideBottomNav
@@ -99,7 +117,7 @@ function AirportStatusPage(props: ReduxProps) {
         setLoading(true);
         setDirection(tabs[index].match);
       }}
-      title={'Search by Airport'}
+      title={{ en: 'Search by Airport', 'zh-Hans': '以机场搜索' }}
       prevIcon={<ChevronLeftIcon />}
       onPrev={() => history.push('/flight')}
       backgroundColor='white'
@@ -134,7 +152,9 @@ function AirportStatusPage(props: ReduxProps) {
                 ) : (
                   <FlightLandIcon sx={{ mr: 1 }} />
                 )}
-                {direction === 'departure' ? 'Departure' : 'Arrival'}
+                {direction === 'departure'
+                  ? getText({ en: 'Departure', 'zh-Hans': '出发' })
+                  : getText({ en: 'Arrival', 'zh-Hans': '到达' })}
               </Typography>
             </Grid>
             <Grid item>
@@ -150,9 +170,15 @@ function AirportStatusPage(props: ReduxProps) {
                   },
                 }}
               >
-                <MenuItem value={'1'}>Terminal 1</MenuItem>
-                <MenuItem value={'2'}>Terminal 2</MenuItem>
-                <MenuItem value={'3'}>Terminal 3</MenuItem>
+                <MenuItem value={'1'}>
+                  {getText({ en: 'Terminal 1', 'zh-Hans': '1 号航站楼' })}
+                </MenuItem>
+                <MenuItem value={'2'}>
+                  {getText({ en: 'Terminal 2', 'zh-Hans': '2 号航站楼' })}
+                </MenuItem>
+                <MenuItem value={'3'}>
+                  {getText({ en: 'Terminal 3', 'zh-Hans': '3 号航站楼' })}
+                </MenuItem>
               </Select>
             </Grid>
           </Grid>
@@ -162,22 +188,24 @@ function AirportStatusPage(props: ReduxProps) {
             <Grid container alignItems='center'>
               <Grid item xs={2}>
                 <Typography variant='subtitle2' textAlign='center'>
-                  Time
+                  {getText({ en: 'Time', 'zh-Hans': '时间' })}
                 </Typography>
               </Grid>
               <Grid item xs={4}>
                 <Typography variant='subtitle2' textAlign='center'>
-                  Destination
+                  {direction === 'departure'
+                    ? getText({ en: 'Destination', 'zh-Hans': '目的地' })
+                    : getText({ en: 'Origin', 'zh-Hans': '始发地' })}
                 </Typography>
               </Grid>
               <Grid item xs={3}>
                 <Typography variant='subtitle2' textAlign='center'>
-                  Flight
+                  {getText({ en: 'Flight', 'zh-Hans': '航班' })}
                 </Typography>
               </Grid>
               <Grid item xs={3}>
                 <Typography variant='subtitle2' textAlign='center'>
-                  Status
+                  {getText({ en: 'Status', 'zh-Hans': '状态' })}
                 </Typography>
               </Grid>
             </Grid>
@@ -216,7 +244,7 @@ function AirportStatusPage(props: ReduxProps) {
                             fontWeight='medium'
                             lineHeight={1.25}
                           >
-                            {flight.destinationAirport?.title?.en}
+                            {getText(flight.destinationAirport?.title)}
                           </Typography>
                         </Grid>
                         <Grid item xs={3}>
@@ -247,10 +275,10 @@ function AirportStatusPage(props: ReduxProps) {
                                     case 'odpt.FlightStatus:Departed':
                                       return 'info';
                                     default:
-                                      return undefined;
+                                      return 'primary';
                                   }
                                 })()}
-                                label={flight.flightStatus.title?.en}
+                                label={getText(flight.flightStatus.title)}
                                 size='small'
                                 sx={{
                                   borderRadius: '6px',
@@ -301,7 +329,7 @@ function AirportStatusPage(props: ReduxProps) {
                             fontWeight='medium'
                             lineHeight={1.25}
                           >
-                            {flight.originAirport?.title?.en}
+                            {getText(flight.originAirport?.title)}
                           </Typography>
                         </Grid>
                         <Grid item xs={3}>
@@ -332,10 +360,10 @@ function AirportStatusPage(props: ReduxProps) {
                                     case 'odpt.FlightStatus:Departed':
                                       return 'info';
                                     default:
-                                      return undefined;
+                                      return 'primary';
                                   }
                                 })()}
-                                label={flight.flightStatus.title?.en}
+                                label={getText(flight.flightStatus.title)}
                                 size='small'
                                 sx={{
                                   borderRadius: '6px',

@@ -32,14 +32,14 @@ import { connect, ReduxProps } from '../redux';
 import { MultiLangObject } from '../type';
 
 interface TabItem {
-  label: string;
+  label: MultiLangObject;
   path?: string;
   match?: string;
 }
 interface Props {
   children: JSX.Element;
   hideBottomNav?: boolean;
-  title?: string;
+  title?: MultiLangObject;
   tabs?: TabItem[];
   prevIcon?: JSX.Element;
   backgroundColor?: string;
@@ -108,11 +108,17 @@ const getDefaultTabs = (path: string): TabItem[] => {
   if (path.includes('/ticket')) {
     return [
       {
-        label: 'Calculator',
+        label: {
+          en: 'Calculator',
+          'zh-Hans': '票价计算器',
+        },
         path: '/ticket/calculator',
       },
       {
-        label: 'Travel Pass',
+        label: {
+          en: 'Travel Pass',
+          'zh-Hans': '旅行优惠票',
+        },
         path: '/ticket/travel-pass',
       },
     ];
@@ -120,11 +126,17 @@ const getDefaultTabs = (path: string): TabItem[] => {
   if (path.includes('/stations/')) {
     return [
       {
-        label: 'Station Info',
+        label: {
+          en: 'Station Info',
+          'zh-Hans': '车站信息',
+        },
         path: '/stations/station-info',
       },
       {
-        label: 'Railway Info',
+        label: {
+          en: 'Railway Info',
+          'zh-Hans': '线路信息',
+        },
         path: '/stations/railway-info',
       },
     ];
@@ -196,7 +208,7 @@ function AppFrame(props: Props & ReduxProps) {
     props.secondaryLang
   );
 
-  const getText = (o?: MultiLangObject) => {
+  const getText = (o?: MultiLangObject | null) => {
     if (o) {
       // @ts-ignore
       return o[props.primaryLang] || o[props.secondaryLang] || '';
@@ -219,7 +231,7 @@ function AppFrame(props: Props & ReduxProps) {
             {props.prevIcon || <MenuIcon />}
           </IconButton>
           <Typography variant='h6' component='div' sx={{ flexGrow: 1 }}>
-            {props.title || 'Tokyo TravelKit'}
+            {getText(props.title) || 'Tokyo TravelKit'}
           </Typography>
           {isMobile || props.hideBottomNav
             ? undefined
@@ -250,9 +262,9 @@ function AppFrame(props: Props & ReduxProps) {
           >
             {subMenus.map(({ label, path }, index) => (
               <Tab
-                label={label}
+                label={getText(label)}
                 value={index}
-                key={label}
+                key={'tab-' + index}
                 onClick={() =>
                   path
                     ? history.push(path)

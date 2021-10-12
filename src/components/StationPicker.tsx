@@ -86,7 +86,7 @@ function StationPicker(props: Props & ReduxProps) {
     setOpen(false);
   };
 
-  const getText = (o?: MultiLangObject): string => {
+  const getText = (o?: MultiLangObject | null) => {
     if (o) {
       // @ts-ignore
       return o[props.primaryLang] || o[props.secondaryLang] || '';

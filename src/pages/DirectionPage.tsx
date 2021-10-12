@@ -13,12 +13,13 @@ import {
 } from '@mui/material';
 import { useState } from 'react';
 import StationPicker from '../components/StationPicker';
-import { StationItem } from '../type';
+import { MultiLangObject, StationItem } from '../type';
 import { ChevronRight as ChevronRightIcon } from '@mui/icons-material';
 import { useHistory } from 'react-router';
 import { MobileTimePicker } from '@mui/lab';
 import jaLocale from 'date-fns/locale/ja';
 import OperatorPicker from '../components/OperatorPicker';
+import { connect, ReduxProps } from '../redux';
 
 const OperatorsWithTrainTimetable: string[] = [
   'odpt.Operator:Sotetsu',
@@ -35,7 +36,7 @@ const calendarList = [
   { en: 'Saturday and Holiday', ja: '土休日' },
 ];
 
-function DirectionPage() {
+function DirectionPage(props: ReduxProps) {
   const [origin, setOrigin] = useState<StationItem>();
   const [destination, setDestination] = useState<StationItem>();
   const theme = useTheme();
@@ -58,10 +59,21 @@ function DirectionPage() {
     Toei: true,
   });
 
+  const getText = (o?: MultiLangObject | null) => {
+    if (o) {
+      // @ts-ignore
+      return o[props.primaryLang] || o[props.secondaryLang] || '';
+    } else {
+      return '';
+    }
+  };
+
   return (
     <div className='direction-page'>
       <Container sx={{ padding: 4 }}>
-        <Typography variant='h5'>Direction</Typography>
+        <Typography variant='h5'>
+          {getText({ en: 'Direction', 'zh-Hans': '路径搜索' })}
+        </Typography>
         <Grid
           container
           display='flex'
@@ -71,7 +83,7 @@ function DirectionPage() {
         >
           <Grid item>
             <Typography fontWeight={'medium'} fontSize={20}>
-              Origin Station
+              {getText({ en: 'Origin Station', 'zh-Hans': '出发车站' })}
             </Typography>
           </Grid>
           <Grid item>
@@ -82,7 +94,7 @@ function DirectionPage() {
                   setOrigin(undefined);
                 }}
               >
-                Clear
+                {getText({ en: 'Clear', 'zh-Hans': '清空' })}
               </Button>
             ) : null}
           </Grid>
@@ -106,7 +118,7 @@ function DirectionPage() {
         >
           <Grid item>
             <Typography fontWeight={'medium'} fontSize={20}>
-              Destination Station
+              {getText({ en: 'Destination Station', 'zh-Hans': '到达车站' })}
             </Typography>
           </Grid>
           <Grid item>
@@ -117,7 +129,7 @@ function DirectionPage() {
                   setDestination(undefined);
                 }}
               >
-                Clear
+                {getText({ en: 'Clear', 'zh-Hans': '清空' })}
               </Button>
             ) : null}
           </Grid>
@@ -136,7 +148,7 @@ function DirectionPage() {
           />
         </div>
         <Typography fontWeight={'medium'} fontSize={20} sx={{ mt: 4, mb: 2 }}>
-          Calendar
+          {getText({ en: 'Calendar', 'zh-Hans': '日历' })}
         </Typography>
         <Select
           value={calendar}
@@ -149,12 +161,12 @@ function DirectionPage() {
         >
           {calendarList.map((c, i) => (
             <MenuItem key={i} value={i}>
-              {c.en}
+              {getText(c)}
             </MenuItem>
           ))}
         </Select>
         <Typography fontWeight={'medium'} fontSize={20} sx={{ mt: 4, mb: 2 }}>
-          Time
+          {getText({ en: 'Time', 'zh-Hans': '时间' })}
         </Typography>
         <Grid container columnSpacing={2}>
           <Grid item xs={6}>
@@ -167,8 +179,12 @@ function DirectionPage() {
               sx={{ fontFamily: 'inherit', backgroundColor: 'white' }}
               size='small'
             >
-              <MenuItem value={0}>Depart at</MenuItem>
-              <MenuItem value={1}>Arrive by</MenuItem>
+              <MenuItem value={0}>
+                {getText({ en: 'Depart at', 'zh-Hans': '出发时间' })}
+              </MenuItem>
+              <MenuItem value={1}>
+                {getText({ en: 'Arrive by', 'zh-Hans': '到达时间' })}
+              </MenuItem>
             </Select>
           </Grid>
           <Grid item xs={6}>
@@ -205,7 +221,7 @@ function DirectionPage() {
           </Grid>
         </Grid>
         <Typography fontSize={20} fontWeight={'medium'} sx={{ mt: 4, mb: 2 }}>
-          Operator Preference
+          {getText({ en: 'Operator Preference', 'zh-Hans': '运营公司偏好' })}
         </Typography>
         <div style={{ margin: isMobile ? '0 -16px' : undefined }}>
           <OperatorPicker
@@ -250,7 +266,7 @@ function DirectionPage() {
                 }
               }}
             >
-              Get Direction
+              {getText({ en: 'Get Direction', 'zh-Hans': '获取路线' })}
             </Button>
           </Grid>
         </Grid>
@@ -259,4 +275,4 @@ function DirectionPage() {
   );
 }
 
-export default DirectionPage;
+export default connect(DirectionPage);

@@ -6,7 +6,10 @@ import { ReduxProps, connect } from '../redux';
 
 const tabs = [
   {
-    label: 'Station Order',
+    label: {
+      en: 'Station Order',
+      'zh-Hans': '站点顺序',
+    },
     match: 'station-order',
   },
 ];
@@ -26,7 +29,7 @@ function RailwayInfoPage(props: ReduxProps) {
       onChangeTab={(i) => {
         history.push(`/stations/railway-info/${railwayId}/${tabs[i].match}`);
       }}
-      title={'Railway Information'}
+      title={{ en: 'Railway Information', 'zh-Hans': '线路信息' }}
       hideBottomNav
     >
       <div className='railway-info-page'>

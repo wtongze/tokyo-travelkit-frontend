@@ -14,10 +14,15 @@ import {
   Flight as FlightIcon,
 } from '@mui/icons-material';
 import { useEffect, useState } from 'react';
-import { ArrivalInformationItem, DepartureInformationItem } from '../type';
+import {
+  ArrivalInformationItem,
+  DepartureInformationItem,
+  MultiLangObject,
+} from '../type';
 import { API } from '../api';
+import { connect, ReduxProps } from '../redux';
 
-function FlightStatusPage() {
+function FlightStatusPage(props: ReduxProps) {
   const match = useRouteMatch<{
     airportCode: string;
     direction: 'departure' | 'arrival';
@@ -53,9 +58,18 @@ function FlightStatusPage() {
     };
   });
 
+  const getText = (o?: MultiLangObject | null) => {
+    if (o) {
+      // @ts-ignore
+      return o[props.primaryLang] || o[props.secondaryLang] || '';
+    } else {
+      return '';
+    }
+  };
+
   return (
     <AppFrame
-      title={'Flight Status'}
+      title={{ en: 'Flight Status', 'zh-Hans': '航班动态' }}
       prevIcon={<ChevronLeftIcon />}
       onPrev={() => history.push(`/flight/${airportCode}/${direction}`)}
       hideBottomNav
@@ -64,7 +78,9 @@ function FlightStatusPage() {
         <Card sx={{ mt: 4, borderRadius: 2 }}>
           {flightInfo ? (
             <CardContent>
-              <Typography sx={{mb: -1}}>{flightInfo.airline?.title?.en}</Typography>
+              <Typography sx={{ mb: -1 }}>
+                {getText(flightInfo.airline?.title)}
+              </Typography>
               <Grid
                 container
                 display='flex'
@@ -85,14 +101,16 @@ function FlightStatusPage() {
                       fontSize: '1rem',
                       color: 'white',
                     }}
-                    label={flightInfo.flightStatus?.title?.en}
+                    label={getText(flightInfo.flightStatus?.title)}
                     color={'info'}
                   ></Chip>
                 </Grid>
               </Grid>
-              <Typography fontSize={18}>
-                ({flightInfo.flightNumber.slice(1).join(' / ')})
-              </Typography>
+              {flightInfo.flightNumber.slice(1).length > 0 ? (
+                <Typography fontSize={18}>
+                  ({flightInfo.flightNumber.slice(1).join(' / ')})
+                </Typography>
+              ) : null}
               {direction === 'departure'
                 ? (() => {
                     const fInfo = flightInfo as DepartureInformationItem;
@@ -132,23 +150,26 @@ function FlightStatusPage() {
                         >
                           <Grid item xs={5}>
                             <Typography fontSize={18} fontWeight='medium'>
-                              {fInfo.departureAirport.title?.en}
+                              {getText(fInfo.departureAirport.title)}
                             </Typography>
                             <Typography fontSize={18}>
-                              ({fInfo.departureAirportTerminal?.title?.en})
+                              ({getText(fInfo.departureAirportTerminal?.title)})
                             </Typography>
                           </Grid>
                           <Grid item xs={2}></Grid>
                           <Grid item xs={5} textAlign='right'>
                             <Typography fontSize={18} fontWeight='medium'>
-                              {fInfo.destinationAirport?.title?.en}
+                              {getText(fInfo.destinationAirport?.title)}
                             </Typography>
                           </Grid>
                         </Grid>
                         <Grid container display='flex' sx={{ mt: 6 }}>
                           <Grid item xs={6}>
                             <Typography fontSize={16} fontWeight='medium'>
-                              Check-In Counter
+                              {getText({
+                                en: 'Check-In Counter',
+                                'zh-Hans': '值机柜台',
+                              })}
                             </Typography>
                             <Typography>
                               {fInfo.checkInCounter?.join(' / ') || '-'}
@@ -156,7 +177,7 @@ function FlightStatusPage() {
                           </Grid>
                           <Grid item xs={6} textAlign='right'>
                             <Typography fontSize={16} fontWeight='medium'>
-                              Gate
+                              {getText({ en: 'Gate', 'zh-Hans': '登机口' })}
                             </Typography>
                             <Typography>
                               {fInfo.departureGate || '-'}
@@ -168,23 +189,32 @@ function FlightStatusPage() {
                           fontWeight='medium'
                           sx={{ mt: 4 }}
                         >
-                          Departure Time
+                          {getText({
+                            en: 'Departure Time',
+                            'zh-Hans': '出发时间',
+                          })}
                         </Typography>
                         <Grid container display='flex'>
                           <Grid item xs={4}>
-                            <Typography fontSize={16}>Scheduled</Typography>
+                            <Typography fontSize={16}>
+                              {getText({ en: 'Scheduled', 'zh-Hans': '计划' })}
+                            </Typography>
                             <Typography>
                               {fInfo.scheduledDepartureTime || '-'}
                             </Typography>
                           </Grid>
                           <Grid item xs={4} textAlign='center'>
-                            <Typography fontSize={16}>Estimated</Typography>
+                            <Typography fontSize={16}>
+                              {getText({ en: 'Estimated', 'zh-Hans': '预计' })}
+                            </Typography>
                             <Typography>
                               {fInfo.estimatedDepartureTime || '-'}
                             </Typography>
                           </Grid>
                           <Grid item xs={4} textAlign='right'>
-                            <Typography fontSize={16}>Actual</Typography>
+                            <Typography fontSize={16}>
+                              {getText({ en: 'Actual', 'zh-Hans': '实际' })}
+                            </Typography>
                             <Typography>
                               {fInfo.actualDepartureTime || '-'}
                             </Typography>
@@ -231,23 +261,26 @@ function FlightStatusPage() {
                         >
                           <Grid item xs={5}>
                             <Typography fontSize={18} fontWeight='medium'>
-                              {fInfo.originAirport?.title?.en}
+                              {getText(fInfo.originAirport?.title)}
                             </Typography>
                           </Grid>
                           <Grid item xs={2}></Grid>
                           <Grid item xs={5} textAlign='right'>
                             <Typography fontSize={18} fontWeight='medium'>
-                              {fInfo.arrivalAirport.title?.en}
+                              {getText(fInfo.arrivalAirport.title)}
                             </Typography>
                             <Typography fontSize={18}>
-                              ({fInfo.arrivalAirportTerminal?.title?.en})
+                              ({getText(fInfo.arrivalAirportTerminal?.title)})
                             </Typography>
                           </Grid>
                         </Grid>
                         <Grid container display='flex' sx={{ mt: 6 }}>
                           <Grid item xs={6}>
                             <Typography fontSize={16} fontWeight='medium'>
-                              Baggage Claim
+                              {getText({
+                                en: 'Baggage Claim',
+                                'zh-Hans': '行李提取',
+                              })}
                             </Typography>
                             <Typography>
                               {fInfo.baggageClaim?.join(' / ') || '-'}
@@ -255,7 +288,7 @@ function FlightStatusPage() {
                           </Grid>
                           <Grid item xs={6} textAlign='right'>
                             <Typography fontSize={16} fontWeight='medium'>
-                              Gate
+                              {getText({ en: 'Gate', 'zh-Hans': '登机口' })}
                             </Typography>
                             <Typography>{fInfo.arrivalGate || '-'}</Typography>
                           </Grid>
@@ -265,23 +298,32 @@ function FlightStatusPage() {
                           fontWeight='medium'
                           sx={{ mt: 4 }}
                         >
-                          Arrival Time
+                          {getText({
+                            en: 'Arrival Time',
+                            'zh-Hans': '到达时间',
+                          })}
                         </Typography>
                         <Grid container display='flex'>
                           <Grid item xs={4}>
-                            <Typography fontSize={16}>Scheduled</Typography>
+                            <Typography fontSize={16}>
+                              {getText({ en: 'Scheduled', 'zh-Hans': '计划' })}
+                            </Typography>
                             <Typography>
                               {fInfo.scheduledArrivalTime || '-'}
                             </Typography>
                           </Grid>
                           <Grid item xs={4} textAlign='center'>
-                            <Typography fontSize={16}>Estimated</Typography>
+                            <Typography fontSize={16}>
+                              {getText({ en: 'Estimated', 'zh-Hans': '预计' })}
+                            </Typography>
                             <Typography>
                               {fInfo.estimatedArrivalTime || '-'}
                             </Typography>
                           </Grid>
                           <Grid item xs={4} textAlign='right'>
-                            <Typography fontSize={16}>Actual</Typography>
+                            <Typography fontSize={16}>
+                              {getText({ en: 'Actual', 'zh-Hans': '实际' })}
+                            </Typography>
                             <Typography>
                               {fInfo.actualArrivalTime || '-'}
                             </Typography>
@@ -293,7 +335,7 @@ function FlightStatusPage() {
             </CardContent>
           ) : (
             <CardContent>
-              <Skeleton></Skeleton>
+              <Skeleton />
             </CardContent>
           )}
         </Card>
@@ -302,4 +344,4 @@ function FlightStatusPage() {
   );
 }
 
-export default FlightStatusPage;
+export default connect(FlightStatusPage);
