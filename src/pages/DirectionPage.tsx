@@ -193,6 +193,18 @@ function DirectionPage(props: ReduxProps) {
               locale={jaLocale}
             >
               <MobileTimePicker
+                toolbarTitle={getText({
+                  en: 'Select Time',
+                  'zh-Hans': '选择时间',
+                })}
+                okText={getText({
+                  en: 'OK',
+                  'zh-Hans': '确定',
+                })}
+                cancelText={getText({
+                  en: 'Cancel',
+                  'zh-Hans': '取消',
+                })}
                 value={time}
                 onChange={(v) => {
                   if (v) {

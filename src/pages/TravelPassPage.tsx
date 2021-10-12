@@ -1,5 +1,7 @@
 import { Container, Typography, Grid } from '@mui/material';
 import TravelPassLinkCard from '../components/TravelPassLinkCard';
+import { connect, ReduxProps } from '../redux';
+import { MultiLangObject } from '../type';
 
 interface TravelPassLinkItem {
   title: string;
@@ -16,12 +18,21 @@ const links: TravelPassLinkItem[] = [
   },
 ];
 
-function TravelPassPage() {
+function TravelPassPage(props: ReduxProps) {
+  const getText = (o?: MultiLangObject | null) => {
+    if (o) {
+      // @ts-ignore
+      return o[props.primaryLang] || o[props.secondaryLang] || '';
+    } else {
+      return '';
+    }
+  };
+
   return (
-    <div className='travel-pass-page'>
+    <div className='discounted-ticket-page'>
       <Container sx={{ padding: 4 }}>
         <Typography variant='h5' fontWeight={'medium'}>
-          Travel Pass
+          {getText({ en: 'Discounted Ticket', 'zh-Hans': '优惠车票' })}
         </Typography>
         <Grid container sx={{ mt: 2 }} flexWrap={'wrap'} spacing={2}>
           {links.map((i) => (
@@ -35,4 +46,4 @@ function TravelPassPage() {
   );
 }
 
-export default TravelPassPage;
+export default connect(TravelPassPage);

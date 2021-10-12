@@ -115,11 +115,8 @@ const getDefaultTabs = (path: string): TabItem[] => {
         path: '/ticket/calculator',
       },
       {
-        label: {
-          en: 'Travel Pass',
-          'zh-Hans': '旅行优惠票',
-        },
-        path: '/ticket/travel-pass',
+        label: { en: 'Discounted Ticket', 'zh-Hans': '优惠车票' },
+        path: '/ticket/discounted-ticket',
       },
     ];
   }
@@ -340,7 +337,7 @@ function AppFrame(props: Props & ReduxProps) {
                 handleClose();
               }}
             >
-              save
+              {getText({ en: 'Save', 'zh-Hans': '保存' })}
             </Button>
           </Toolbar>
         </AppBar>

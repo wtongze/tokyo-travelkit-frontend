@@ -14,7 +14,7 @@ import { Train as TrainIcon } from '@mui/icons-material';
 import { API } from '../api';
 import { ReduxProps, connect } from '../redux';
 import { useEffect, useState } from 'react';
-import { StationInfo, StationTimetableItem } from '../type';
+import { MultiLangObject, StationInfo, StationTimetableItem } from '../type';
 
 interface Props {
   stationId: string;
@@ -56,11 +56,20 @@ function StationTimetablePage(props: Props & ReduxProps) {
     };
   });
 
+  const getText = (o?: MultiLangObject | null) => {
+    if (o) {
+      // @ts-ignore
+      return o[props.primaryLang] || o[props.secondaryLang] || '';
+    } else {
+      return '';
+    }
+  };
+
   return (
     <div className='station-timetable-page'>
       <Container sx={{ padding: 4 }}>
         <Typography variant='h5' fontWeight={'medium'} sx={{ mb: 4 }}>
-          Station Timetable
+          {getText({ en: 'Station Timetable', 'zh-Hans': '车站时刻表' })}
         </Typography>
         {station ? (
           <div>
@@ -90,10 +99,11 @@ function StationTimetablePage(props: Props & ReduxProps) {
               </Grid>
               <Grid item xs={10} sx={{ px: 4 }}>
                 <Typography fontWeight={'medium'} fontSize={20}>
-                  {station.title?.en}
+                  {getText(station.title)}
                 </Typography>
                 <Typography fontSize={14} sx={{ mt: -1 }}>
-                  {station.operatorTitle?.en} - {station.railwayTitle?.en}
+                  {getText(station.operatorTitle)} -{' '}
+                  {getText(station.railwayTitle)}
                 </Typography>
               </Grid>
             </Grid>
@@ -116,12 +126,12 @@ function StationTimetablePage(props: Props & ReduxProps) {
                       >
                         <Chip
                           size='small'
-                          label={t.calendarTitle?.en}
+                          label={getText(t.calendarTitle)}
                           sx={{ borderRadius: 1 }}
                           color={i % 2 === 0 ? 'primary' : 'secondary'}
                         />
                         <Typography fontWeight={'medium'} sx={{ mt: 1 }}>
-                          {t.railDirectionTitle?.en}
+                          {getText(t.railDirectionTitle)}
                         </Typography>
                       </MenuItem>
                     ))}
@@ -148,14 +158,15 @@ function StationTimetablePage(props: Props & ReduxProps) {
                                 <Grid item xs={10} sx={{ px: 4 }}>
                                   <div style={{ display: 'flex' }}>
                                     <Chip
-                                      label={item.trainTypeTitle?.en}
+                                      label={getText(item.trainTypeTitle)}
                                       size='small'
                                       sx={{ borderRadius: 1 }}
+                                      color='info'
                                     />
                                     {item.trainName ? (
                                       <Typography>
                                         {item.trainName
-                                          .map((i) => i.en)
+                                          .map((i) => getText(i))
                                           .join(' / ')}
                                       </Typography>
                                     ) : null}
@@ -211,7 +222,7 @@ function StationTimetablePage(props: Props & ReduxProps) {
                                               fontSize={20}
                                               fontWeight={'medium'}
                                             >
-                                              {i.stationTitle?.en}
+                                              {getText(i.stationTitle)}
                                             </Typography>
                                           </div>
                                         );
@@ -229,8 +240,10 @@ function StationTimetablePage(props: Props & ReduxProps) {
                 </div>
               ) : (
                 <Alert severity='error' sx={{ mt: 4 }}>
-                  No timetable available. Please check the offical website of{' '}
-                  {stationDetailInfo.operatorTitle?.en}.
+                  {getText({
+                    en: 'No timetable available.',
+                    'zh-Hans': '未找到时刻表。',
+                  })}
                 </Alert>
               )
             ) : null}

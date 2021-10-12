@@ -7,7 +7,7 @@ import {
 import { useHistory, useRouteMatch } from 'react-router';
 import AppFrame from '../components/AppFrame';
 import { useEffect, useState } from 'react';
-import { RailwayFareInfo } from '../type';
+import { MultiLangObject, RailwayFareInfo } from '../type';
 import { API } from '../api';
 import { connect, ReduxProps } from '../redux';
 
@@ -18,6 +18,15 @@ function TicketFarePage(props: ReduxProps) {
   const { from, to } = match.params;
   const fromInfo = props.stations.find((i) => i.id === from);
   const toInfo = props.stations.find((i) => i.id === to);
+
+  const getText = (o?: MultiLangObject | null) => {
+    if (o) {
+      // @ts-ignore
+      return o[props.primaryLang] || o[props.secondaryLang] || '';
+    } else {
+      return '';
+    }
+  };
 
   useEffect(() => {
     let subscribe = true;
@@ -46,7 +55,7 @@ function TicketFarePage(props: ReduxProps) {
       >
         <Container sx={{ padding: 4 }}>
           <Typography variant='h5' sx={{ mb: 4 }}>
-            Fare Information
+            {getText({ en: 'Fare Information', 'zh-Hans': '票价信息' })}
           </Typography>
           {fromInfo && toInfo ? (
             <Grid container sx={{ mb: 4 }}>
@@ -77,10 +86,11 @@ function TicketFarePage(props: ReduxProps) {
                   </Grid>
                   <Grid item xs={10} sx={{ px: 4 }}>
                     <Typography fontWeight={'medium'} fontSize={20}>
-                      {fromInfo.title?.en}
+                      {getText(fromInfo.title)}
                     </Typography>
                     <Typography fontSize={14} sx={{ mt: -1 }}>
-                      {fromInfo.operatorTitle?.en} - {fromInfo.railwayTitle?.en}
+                      {getText(fromInfo.operatorTitle)} -{' '}
+                      {getText(fromInfo.railwayTitle)}
                     </Typography>
                   </Grid>
                 </Grid>
@@ -115,10 +125,11 @@ function TicketFarePage(props: ReduxProps) {
                   </Grid>
                   <Grid item xs={10} sx={{ px: 4 }}>
                     <Typography fontWeight={'medium'} fontSize={20}>
-                      {toInfo.title?.en}
+                      {getText(toInfo.title)}
                     </Typography>
                     <Typography fontSize={14} sx={{ mt: -1 }}>
-                      {toInfo.operatorTitle?.en} - {toInfo.railwayTitle?.en}
+                      {getText(toInfo.operatorTitle)} -{' '}
+                      {getText(toInfo.railwayTitle)}
                     </Typography>
                   </Grid>
                 </Grid>
@@ -133,51 +144,70 @@ function TicketFarePage(props: ReduxProps) {
                     <Card elevation={0} sx={{ borderRadius: 2 }}>
                       <CardContent>
                         <Typography variant='h6'>
-                          {f.operatorTitle?.en}
+                          {getText(f.operatorTitle)}
                         </Typography>
                         {f.viaStation ? (
                           <Typography>
-                            via:{' '}
+                            {getText({ en: 'via', 'zh-Hans': '经由' })}:{' '}
                             {f.viaStation
-                              .map((i) => i.stationTitle?.en)
+                              .map((i) => getText(i.stationTitle))
                               .join(', ')}
                           </Typography>
                         ) : null}
                         {f.viaRailway ? (
                           <Typography>
-                            via:{' '}
+                            {getText({ en: 'via', 'zh-Hans': '经由' })}:{' '}
                             {f.viaRailway
-                              .map((i) => i.railwayTitle?.en)
+                              .map((i) => getText(i.railwayTitle))
                               .join(', ')}
                           </Typography>
                         ) : null}
                         <Grid container sx={{ mt: 4 }}>
                           <Grid item xs={6}>
-                            <Typography fontWeight={'bold'}>Adult</Typography>
+                            <Typography fontWeight={'bold'}>
+                              {getText({ en: 'Adult', 'zh-Hans': '成人' })}
+                            </Typography>
                             <Grid container>
                               <Grid item xs={12}>
                                 <Typography>
-                                  Ticket Fare: <br /> {f.ticketFare}
+                                  {getText({
+                                    en: 'Ticket Fare',
+                                    'zh-Hans': '车票票价',
+                                  })}
+                                  : <br /> {f.ticketFare}
                                 </Typography>
                                 {f.icCardFare ? (
                                   <Typography sx={{ mt: 2 }}>
-                                    IC Card Fare: <br /> {f.icCardFare || '-'}
+                                    {getText({
+                                      en: 'IC Card Fare',
+                                      'zh-Hans': 'IC 卡票价',
+                                    })}
+                                    : <br /> {f.icCardFare || '-'}
                                   </Typography>
                                 ) : null}
                               </Grid>
                             </Grid>
                           </Grid>
                           <Grid item xs={6}>
-                            <Typography fontWeight={'bold'}>Child</Typography>
+                            <Typography fontWeight={'bold'}>
+                              {getText({ en: 'Child', 'zh-Hans': '儿童' })}
+                            </Typography>
                             <Grid container>
                               <Grid item xs={12}>
                                 <Typography>
-                                  Ticket Fare: <br /> {f.childTicketFare || '-'}
+                                  {getText({
+                                    en: 'Ticket Fare',
+                                    'zh-Hans': '车票票价',
+                                  })}
+                                  : <br /> {f.childTicketFare || '-'}
                                 </Typography>
                                 {f.icCardFare ? (
                                   <Typography sx={{ mt: 2 }}>
-                                    IC Card Fare: <br />{' '}
-                                    {f.childIcCardFare || '-'}
+                                    {getText({
+                                      en: 'IC Card Fare',
+                                      'zh-Hans': 'IC 卡票价',
+                                    })}
+                                    : <br /> {f.childIcCardFare || '-'}
                                   </Typography>
                                 ) : null}
                               </Grid>

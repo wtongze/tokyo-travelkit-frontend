@@ -179,12 +179,19 @@ function OperatorPicker(props: Props & ReduxProps) {
                 handleClose();
               }}
             >
-              <Typography fontWeight={'medium'}>save</Typography>
+              <Typography fontWeight={'medium'}>
+                {getText({ en: 'Save', 'zh-Hans': '保存' })}
+              </Typography>
             </Button>
           </Toolbar>
         </AppBar>
         <Alert severity='info'>
-          <Typography>Choose your prefered operator...</Typography>
+          <Typography>
+            {getText({
+              en: 'Choose your prefered operator...',
+              'zh-Hans': '请选择对运营公司的偏好。',
+            })}
+          </Typography>
         </Alert>
         <List disablePadding>
           <Divider />

@@ -5,7 +5,7 @@ import TravelPassPage from './TravelPassPage';
 function TicketTabPage() {
   const location = useLocation();
 
-  return location.pathname === '/ticket/travel-pass' ? (
+  return location.pathname === '/ticket/discounted-ticket' ? (
     <TravelPassPage />
   ) : (
     <TicketCalculatorPage />

@@ -2,7 +2,6 @@ import { useHistory, useRouteMatch } from 'react-router';
 import { ChevronLeft as ChevronLeftIcon } from '@mui/icons-material';
 import AppFrame from '../components/AppFrame';
 import StationTimetablePage from './StationTimetablePage';
-import { ReduxProps, connect } from '../redux';
 
 const tabs = [
   {
@@ -18,7 +17,7 @@ const tabs = [
   // },
 ];
 
-function StationInfoPage(props: ReduxProps) {
+function StationInfoPage() {
   const history = useHistory();
   const match = useRouteMatch<{
     stationId: string;
@@ -46,4 +45,4 @@ function StationInfoPage(props: ReduxProps) {
   );
 }
 
-export default connect(StationInfoPage);
+export default StationInfoPage;

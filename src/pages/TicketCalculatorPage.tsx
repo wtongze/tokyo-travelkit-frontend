@@ -9,8 +9,9 @@ import {
 import { useState } from 'react';
 import { ChevronRight as ChevronRightIcon } from '@mui/icons-material';
 import StationPicker from '../components/StationPicker';
-import { StationItem } from '../type';
+import { MultiLangObject, StationItem } from '../type';
 import { useHistory } from 'react-router';
+import { connect, ReduxProps } from '../redux';
 
 const operatorWithFareInfo: string[] = [
   'odpt.Operator:Sotetsu',
@@ -28,18 +29,30 @@ const operatorWithFareInfo: string[] = [
   'odpt.Operator:Toei',
 ];
 
-function TicketCalculatorPage() {
+function TicketCalculatorPage(props: ReduxProps) {
   const history = useHistory();
   const [origin, setOrigin] = useState<StationItem | undefined>();
   const [destination, setDestination] = useState<StationItem | undefined>();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
+  const getText = (o?: MultiLangObject | null) => {
+    if (o) {
+      // @ts-ignore
+      return o[props.primaryLang] || o[props.secondaryLang] || '';
+    } else {
+      return '';
+    }
+  };
+
   return (
     <div className='ticket-calculator-page'>
       <Container sx={{ padding: 4 }}>
         <Typography variant='h5' fontWeight={'medium'}>
-          Ticket Fare Calculator
+          {getText({
+            en: 'Ticket Fare Calculator',
+            'zh-Hans': '车票费用计算器',
+          })}
         </Typography>
         <Grid
           container
@@ -50,7 +63,7 @@ function TicketCalculatorPage() {
         >
           <Grid item>
             <Typography fontWeight={'medium'} fontSize={20}>
-              Origin
+              {getText({ en: 'Origin', 'zh-Hans': '出发站' })}
             </Typography>
           </Grid>
           <Grid item>
@@ -61,7 +74,7 @@ function TicketCalculatorPage() {
                   setOrigin(undefined);
                 }}
               >
-                Clear
+                {getText({ en: 'Clear', 'zh-Hans': '清空' })}
               </Button>
             ) : null}
           </Grid>
@@ -88,7 +101,7 @@ function TicketCalculatorPage() {
         >
           <Grid item>
             <Typography fontWeight={'medium'} fontSize={20}>
-              Destination
+              {getText({ en: 'Destination', 'zh-Hans': '到达站' })}
             </Typography>
           </Grid>
           <Grid item>
@@ -99,7 +112,7 @@ function TicketCalculatorPage() {
                   setDestination(undefined);
                 }}
               >
-                Clear
+                {getText({ en: 'Clear', 'zh-Hans': '清空' })}
               </Button>
             ) : null}
           </Grid>
@@ -130,7 +143,7 @@ function TicketCalculatorPage() {
                 }
               }}
             >
-              Calculate Fare
+              {getText({ en: 'Calculate Fare', 'zh-Hans': '计算车费' })}
             </Button>
           </Grid>
         </Grid>
@@ -139,4 +152,4 @@ function TicketCalculatorPage() {
   );
 }
 
-export default TicketCalculatorPage;
+export default connect(TicketCalculatorPage);

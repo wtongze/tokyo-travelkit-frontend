@@ -9,8 +9,9 @@ import {
 import { ChevronRight as ChevronRightIcon } from '@mui/icons-material';
 import { useState } from 'react';
 import StationPicker from '../components/StationPicker';
-import { StationItem } from '../type';
+import { MultiLangObject, StationItem } from '../type';
 import { useHistory } from 'react-router';
+import { connect, ReduxProps } from '../redux';
 
 const OperatorsWithStationTimetable: string[] = [
   'odpt.Operator:Sotetsu',
@@ -29,19 +30,33 @@ const OperatorsWithStationTimetable: string[] = [
   'odpt.Operator:Toei',
 ];
 
-function StationsInfoPage() {
+function StationsInfoPage(props: ReduxProps) {
   const history = useHistory();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const [station, setStation] = useState<StationItem>();
 
+  const getText = (o?: MultiLangObject | null) => {
+    if (o) {
+      // @ts-ignore
+      return o[props.primaryLang] || o[props.secondaryLang] || '';
+    } else {
+      return '';
+    }
+  };
+
   return (
     <div className='stations-info-page'>
       <Container sx={{ padding: 4 }}>
         <Typography variant='h5' fontWeight={'medium'}>
-          Station Information
+          {getText({ en: 'Station Information', 'zh-Hans': '车站信息' })}
         </Typography>
-        <Typography variant='subtitle1'>Check timetables here...</Typography>
+        <Typography variant='subtitle1'>
+          {getText({
+            en: 'Check timetables here...',
+            'zh-Hans': '在此查询时刻表',
+          })}
+        </Typography>
         <Grid
           container
           display='flex'
@@ -51,7 +66,7 @@ function StationsInfoPage() {
         >
           <Grid item>
             <Typography fontWeight={'medium'} fontSize={20}>
-              Station
+              {getText({ en: 'Station', 'zh-Hans': '车站' })}
             </Typography>
           </Grid>
           <Grid item>
@@ -62,7 +77,7 @@ function StationsInfoPage() {
                   setStation(undefined);
                 }}
               >
-                Clear
+                {getText({ en: 'Clear', 'zh-Hans': '清空' })}
               </Button>
             ) : null}
           </Grid>
@@ -92,7 +107,7 @@ function StationsInfoPage() {
                 }
               }}
             >
-              Get Information
+              {getText({ en: 'Get Information', 'zh-Hans': '获取信息' })}
             </Button>
           </Grid>
         </Grid>
@@ -101,4 +116,4 @@ function StationsInfoPage() {
   );
 }
 
-export default StationsInfoPage;
+export default connect(StationsInfoPage);
