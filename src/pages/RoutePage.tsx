@@ -12,6 +12,7 @@ import {
   Chip,
   Button,
   Alert,
+  CircularProgress,
 } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { DirectionRoute, MultiLangObject } from '../type';
@@ -24,6 +25,7 @@ function RoutePage(props: ReduxProps) {
   const location = useLocation();
   const [route, setRoute] = useState<DirectionRoute>();
   const [hideList, setHideList] = useState<boolean[][]>([]);
+  const [error, setError] = useState(false);
 
   const { origin, destination } = params;
 
@@ -90,6 +92,8 @@ function RoutePage(props: ReduxProps) {
             }
           }
           setHideList(total);
+        } else {
+          setError(true);
         }
       });
     }
@@ -180,14 +184,18 @@ function RoutePage(props: ReduxProps) {
                       <Grid item xs={9} sx={{ px: 4 }}>
                         {station ? (
                           <div>
-                            <Typography fontWeight={'bold'} fontSize={20}>
+                            <Typography
+                              fontWeight={'bold'}
+                              fontSize={20}
+                              sx={{ mb: 1 }}
+                            >
                               {getText(station.title)}
                             </Typography>
                             {station.hasStationIcon ? (
                               <img
                                 src={API.getStationIconPath(station.id)}
                                 alt={station.stationCode}
-                                height={25}
+                                height={35}
                                 style={{ display: 'block' }}
                                 loading={'lazy'}
                               />
@@ -196,10 +204,20 @@ function RoutePage(props: ReduxProps) {
                                 {station.stationCode}
                               </Typography>
                             ) : null}
+                            <Typography
+                              sx={{ mt: 2, mb: 4 }}
+                              fontWeight={'medium'}
+                            >
+                              (
+                              {getText(station.operatorTitle) +
+                                ' - ' +
+                                getText(station.railwayTitle)}
+                              )
+                            </Typography>
                           </div>
                         ) : null}
                         <Typography
-                          fontWeight={'medium'}
+                          fontWeight={'bold'}
                           fontSize={18}
                           sx={{ my: 6 }}
                         >
@@ -256,14 +274,18 @@ function RoutePage(props: ReduxProps) {
                       <Grid item xs={9} sx={{ px: 4 }}>
                         {fromStation ? (
                           <div>
-                            <Typography fontWeight={'bold'} fontSize={20}>
+                            <Typography
+                              fontWeight={'bold'}
+                              fontSize={20}
+                              sx={{ mb: 1 }}
+                            >
                               {getText(fromStation.title)}
                             </Typography>
                             {fromStation.hasStationIcon ? (
                               <img
                                 src={API.getStationIconPath(fromStation.id)}
                                 alt={fromStation.stationCode}
-                                height={25}
+                                height={35}
                                 style={{ display: 'block' }}
                                 loading={'lazy'}
                               />
@@ -272,6 +294,16 @@ function RoutePage(props: ReduxProps) {
                                 {fromStation.stationCode}
                               </Typography>
                             ) : null}
+                            <Typography
+                              sx={{ mt: 2, mb: 2 }}
+                              fontWeight={'medium'}
+                            >
+                              (
+                              {getText(fromStation.operatorTitle) +
+                                ' - ' +
+                                getText(fromStation.railwayTitle)}
+                              )
+                            </Typography>
                           </div>
                         ) : null}
                       </Grid>
@@ -314,7 +346,7 @@ function RoutePage(props: ReduxProps) {
                                 .join(' / ');
                               return `${getText({
                                 en: 'For ',
-                                'zh-Hans': '往 ',
+                                'zh-Hans': '开往 ',
                               })}${str}`;
                             } else {
                               return null;
@@ -410,14 +442,14 @@ function RoutePage(props: ReduxProps) {
                                   ></div>
                                 </Grid>
                                 <Grid item xs={9} sx={{ px: 4, py: 3 }}>
-                                  <Typography>
+                                  <Typography sx={{ mb: 1 }}>
                                     {getText(stop?.title)}
                                   </Typography>
                                   {stop?.hasStationIcon ? (
                                     <img
                                       src={API.getStationIconPath(stop?.id)}
                                       alt={stop?.stationCode}
-                                      height={25}
+                                      height={30}
                                       style={{ display: 'block' }}
                                       loading={'lazy'}
                                     />
@@ -430,7 +462,8 @@ function RoutePage(props: ReduxProps) {
                               </Grid>
                             )}
                             {stopIndex === v.stops.length - 1 &&
-                            fromRailway?.id !== toRailway?.id ? (
+                            fromRailway?.id !== toRailway?.id &&
+                            vNextRailway ? (
                               <Grid container key={viaIndex + '-' + stopIndex}>
                                 <Grid item xs={2}></Grid>
                                 <Grid item xs={1}>
@@ -458,14 +491,14 @@ function RoutePage(props: ReduxProps) {
                                 <Grid item xs={9} sx={{ px: 4, py: 3 }}>
                                   {vNextRailway ? (
                                     props.primaryLang === 'en' ? (
-                                      <Typography>
+                                      <Typography fontWeight={'medium'}>
                                         Direct service to{' '}
                                         {getText(vNextRailway.title)}
                                         <br />
                                         (via {getText(stop?.title)})
                                       </Typography>
                                     ) : (
-                                      <Typography>
+                                      <Typography fontWeight={'medium'}>
                                         直通运行至 {getText(vNextRailway.title)}
                                         <br />
                                         (经由 {getText(stop?.title)})
@@ -504,14 +537,18 @@ function RoutePage(props: ReduxProps) {
                       <Grid item xs={9} sx={{ px: 4, pt: 4 }}>
                         {toStation ? (
                           <div>
-                            <Typography fontWeight={'bold'} fontSize={20}>
+                            <Typography
+                              fontWeight={'bold'}
+                              fontSize={20}
+                              sx={{ mb: 1 }}
+                            >
                               {getText(toStation.title)}
                             </Typography>
                             {toStation.hasStationIcon ? (
                               <img
                                 src={API.getStationIconPath(toStation.id)}
                                 alt={toStation.stationCode}
-                                height={25}
+                                height={35}
                                 style={{ display: 'block' }}
                                 loading={'lazy'}
                               />
@@ -520,6 +557,13 @@ function RoutePage(props: ReduxProps) {
                                 {toStation.stationCode}
                               </Typography>
                             ) : null}
+                            <Typography sx={{ mt: 2 }} fontWeight={'medium'}>
+                              (
+                              {getText(toStation.operatorTitle) +
+                                ' - ' +
+                                getText(toStation.railwayTitle)}
+                              )
+                            </Typography>
                           </div>
                         ) : null}
                       </Grid>
@@ -544,7 +588,7 @@ function RoutePage(props: ReduxProps) {
                       </Grid>
                       <Grid item xs={9} sx={{ px: 4 }}>
                         <Typography
-                          fontWeight={'medium'}
+                          fontWeight={'bold'}
                           fontSize={18}
                           sx={{ my: 6 }}
                         >
@@ -586,7 +630,7 @@ function RoutePage(props: ReduxProps) {
                       </Grid>
                       <Grid item xs={9} sx={{ px: 4 }}>
                         <Typography
-                          fontWeight={'medium'}
+                          fontWeight={'bold'}
                           fontSize={18}
                           sx={{ my: 6 }}
                         >
@@ -616,7 +660,7 @@ function RoutePage(props: ReduxProps) {
                               <img
                                 src={API.getStationIconPath(station.id)}
                                 alt={station.stationCode}
-                                height={25}
+                                height={35}
                                 style={{ display: 'block' }}
                                 loading={'lazy'}
                               />
@@ -625,6 +669,13 @@ function RoutePage(props: ReduxProps) {
                                 {station.stationCode}
                               </Typography>
                             ) : null}
+                            <Typography sx={{ mt: 2 }} fontWeight={'medium'}>
+                              (
+                              {getText(station.operatorTitle) +
+                                ' - ' +
+                                getText(station.railwayTitle)}
+                              )
+                            </Typography>
                           </div>
                         ) : null}
                       </Grid>
@@ -635,7 +686,7 @@ function RoutePage(props: ReduxProps) {
                 return null;
               }
             })
-          ) : (
+          ) : error ? (
             <Alert severity='error' sx={{ mt: 4 }}>
               <Typography>
                 {getText({
@@ -644,6 +695,14 @@ function RoutePage(props: ReduxProps) {
                 })}
               </Typography>
             </Alert>
+          ) : (
+            <CircularProgress
+              sx={{
+                position: 'absolute',
+                top: 'calc(50% - 20px)',
+                left: 'calc(50% - 20px)',
+              }}
+            />
           )}
         </Container>
       </AppFrame>
