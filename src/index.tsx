@@ -9,7 +9,7 @@ import './index.css';
 
 const theme = createTheme({
   typography: {
-    fontFamily: ['Montserrat', 'sans-serif'].join(','),
+    fontFamily: ['Montserrat', 'Noto Sans SC', 'Noto Sans JP', 'sans-serif'].join(','),
   },
   spacing: 4,
   components: {
