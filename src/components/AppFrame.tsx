@@ -16,6 +16,12 @@ import {
   Select,
   MenuItem,
   Grid,
+  Drawer,
+  Box,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
 } from '@mui/material';
 import {
   Menu as MenuIcon,
@@ -25,6 +31,8 @@ import {
   Translate as TranslateIcon,
   ConfirmationNumber as TicketIcon,
   Close as CloseIcon,
+  HelpOutlineOutlined as HelpIcon,
+  InfoOutlined as InfoIcon,
 } from '@mui/icons-material';
 import { useHistory, useLocation } from 'react-router';
 import { TransitionProps } from '@mui/material/transitions';
@@ -205,6 +213,8 @@ function AppFrame(props: Props & ReduxProps) {
     props.secondaryLang
   );
 
+  const [drawer, setDrawer] = useState(false);
+
   const getText = (o?: MultiLangObject | null) => {
     if (o) {
       // @ts-ignore
@@ -223,7 +233,7 @@ function AppFrame(props: Props & ReduxProps) {
             edge='start'
             color='inherit'
             sx={{ mr: 0.5 }}
-            onClick={() => (props.onPrev ? props.onPrev() : null)}
+            onClick={() => (props.onPrev ? props.onPrev() : setDrawer(true))}
           >
             {props.prevIcon || <MenuIcon />}
           </IconButton>
@@ -380,6 +390,49 @@ function AppFrame(props: Props & ReduxProps) {
           </Select>
         </Grid>
       </Dialog>
+      <Drawer
+        anchor={'left'}
+        open={drawer}
+        onClose={() => {
+          setDrawer(false);
+        }}
+      >
+        <Box
+          sx={{ width: 250 }}
+          role='presentation'
+          onClick={() => {
+            setDrawer(false);
+          }}
+          onKeyDown={() => {
+            setDrawer(false);
+          }}
+        >
+          <List>
+            <ListItem
+              button
+              onClick={() => {
+                history.push('/help');
+              }}
+            >
+              <ListItemIcon>
+                <HelpIcon />
+              </ListItemIcon>
+              <ListItemText primary={'Help'} />
+            </ListItem>
+            <ListItem
+              button
+              onClick={() => {
+                history.push('/about');
+              }}
+            >
+              <ListItemIcon>
+                <InfoIcon />
+              </ListItemIcon>
+              <ListItemText primary={'About'} />
+            </ListItem>
+          </List>
+        </Box>
+      </Drawer>
     </div>
   );
 }

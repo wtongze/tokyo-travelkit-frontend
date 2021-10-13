@@ -112,7 +112,7 @@ function RoutePage(props: ReduxProps) {
         onPrev={() => {
           history.push('/direction');
         }}
-        backgroundColor={'#f1f3f5'}
+        backgroundColor={'#ffffff'}
       >
         <Container sx={{ padding: 4 }}>
           <Typography variant='h5'>

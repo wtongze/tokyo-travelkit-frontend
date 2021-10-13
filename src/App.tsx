@@ -19,6 +19,8 @@ import StationInfoPage from './pages/StationInfoPage';
 import RailwayInfoPage from './pages/RailwayInfoPage';
 import DirectionPage from './pages/DirectionPage';
 import RoutePage from './pages/RoutePage';
+import AboutPage from './pages/AboutPage';
+import HelpPage from './pages/HelpPage';
 
 function App(props: ReduxProps) {
   useEffect(() => {
@@ -69,6 +71,14 @@ function App(props: ReduxProps) {
         </Route>
         <Route path='/flight/:airportCode/:direction'>
           <AirportStatusPage />
+        </Route>
+
+        <Route path='/about'>
+          <AboutPage />
+        </Route>
+
+        <Route path='/help'>
+          <HelpPage />
         </Route>
 
         <Route>
