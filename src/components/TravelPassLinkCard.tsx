@@ -1,20 +1,32 @@
 import { ButtonBase, Paper, Typography } from '@mui/material';
 import { OpenInNew as OpenInNewIcon } from '@mui/icons-material';
+import { MultiLangObject } from '../type';
+import { connect, ReduxProps } from '../redux';
 
 interface Props {
-  title: string;
+  title: MultiLangObject;
   link: string;
 }
 
-function TravelPassLinkCard(props: Props) {
+function TravelPassLinkCard(props: Props & ReduxProps) {
   const url = new URL(props.link);
+
+  const getText = (o?: MultiLangObject | null) => {
+    if (o) {
+      // @ts-ignore
+      return o[props.primaryLang] || o[props.secondaryLang] || '';
+    } else {
+      return '';
+    }
+  };
+
   return (
     <ButtonBase sx={{ width: '100%' }}>
       <a
         href={props.link}
         style={{ textDecoration: 'none', width: '100%' }}
         target='_blank'
-        rel="noreferrer"
+        rel='noreferrer'
       >
         <Paper
           elevation={0}
@@ -29,7 +41,7 @@ function TravelPassLinkCard(props: Props) {
         >
           <div style={{ textAlign: 'left' }}>
             <Typography fontSize={18} fontWeight={'medium'}>
-              {props.title}
+              {getText(props.title)}
             </Typography>
             <Typography>{url.hostname.replace('www.', '')}</Typography>
           </div>
@@ -42,4 +54,4 @@ function TravelPassLinkCard(props: Props) {
   );
 }
 
-export default TravelPassLinkCard;
+export default connect(TravelPassLinkCard);
