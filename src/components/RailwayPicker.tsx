@@ -50,13 +50,15 @@ function RailwayPicker(props: Props & ReduxProps) {
   const [filter, setFilter] = useState('');
   const selected = props.value;
 
-  const source = props.railways.filter((i) => {
-    if (props.operator !== undefined) {
-      return props.operator.some((j) => i.operator === j);
-    } else {
-      return true;
-    }
-  });
+  const source = props.railways
+    .filter((i) => {
+      if (props.operator !== undefined) {
+        return props.operator.some((j) => i.operator === j);
+      } else {
+        return true;
+      }
+    })
+    .filter((i) => i.hasStationOrder);
   const fuse = new Fuse(source, {
     keys: [
       'title.en',

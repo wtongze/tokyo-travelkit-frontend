@@ -151,6 +151,7 @@ export interface RailwayItem {
   operatorTitle?: MultiLangObject;
   lineCode?: string;
   color?: string;
+  hasStationOrder?: boolean;
 }
 
 export interface RailwayInfo {
