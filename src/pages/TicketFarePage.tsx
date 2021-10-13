@@ -214,6 +214,13 @@ function TicketFarePage(props: ReduxProps) {
                             </Grid>
                           </Grid>
                         </Grid>
+                        <Typography fontSize={12} sx={{ mt: 4 }}>
+                          {getText({
+                            en: 'Last Updated at ',
+                            'zh-Hans': '最近更新于 ',
+                          })}
+                          {new Date(f.dcDate).toLocaleString()}
+                        </Typography>
                       </CardContent>
                     </Card>
                   </Grid>

@@ -25,7 +25,7 @@ import HelpPage from './pages/HelpPage';
 function App(props: ReduxProps) {
   useEffect(() => {
     if (props.stations.length === 0) {
-      props.setStations([{ id: '', railway: '', operator: '' }]);
+      props.setStations([{ id: '', dcDate: '', railway: '', operator: '' }]);
       API.getStations().then((data) => {
         if (data) {
           props.setStations(data);
@@ -33,7 +33,7 @@ function App(props: ReduxProps) {
       });
     }
     if (props.railways.length === 0) {
-      props.setRailways([{ id: '', operator: '' }]);
+      props.setRailways([{ id: '', dcDate: '', operator: '' }]);
       API.getRailways().then((data) => {
         if (data) {
           props.setRailways(data);

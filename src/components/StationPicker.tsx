@@ -279,6 +279,15 @@ function StationPicker(props: Props & ReduxProps) {
             </div>
           ))}
         </List>
+        {props.stationsDcDate ? (
+          <Typography fontSize={12} sx={{ mt: 0, mb: 2 }} textAlign='center'>
+            {getText({
+              en: 'Last Updated at ',
+              'zh-Hans': '最近更新于 ',
+            })}
+            {props.stationsDcDate.toLocaleString()}
+          </Typography>
+        ) : null}
       </Dialog>
     </div>
   );

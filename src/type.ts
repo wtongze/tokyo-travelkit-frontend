@@ -58,6 +58,7 @@ export interface MultiLangObject {
 
 export interface StationItem {
   id: string;
+  dcDate: string;
   stationCode?: string;
   title?: MultiLangObject;
   railway: string;
@@ -69,6 +70,7 @@ export interface StationItem {
 
 export interface RailwayFareInfo {
   id: string;
+  dcDate: string;
   operatorTitle?: MultiLangObject;
   fromStationTitle?: MultiLangObject;
   toStationTitle?: MultiLangObject;
@@ -142,6 +144,7 @@ export interface StationTimetableItem {
 
 export interface RailwayItem {
   id: string;
+  dcDate: string;
   title?: MultiLangObject;
   kana?: string;
   operator: string;

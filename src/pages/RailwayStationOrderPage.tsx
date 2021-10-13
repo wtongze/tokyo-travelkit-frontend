@@ -228,6 +228,10 @@ function RailwayStationOrderPage(props: Props & ReduxProps) {
                 </div>
               ) : null
             ) : null}
+            <Typography fontSize={12} sx={{ mt: 2 }}>
+              {getText({ en: 'Last Updated at ', 'zh-Hans': '最近更新于 ' })}
+              {new Date(railway.dcDate).toLocaleString()}
+            </Typography>
           </div>
         ) : null}
       </Container>

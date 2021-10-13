@@ -226,6 +226,13 @@ function OperatorPicker(props: Props & ReduxProps) {
             </div>
           ))}
         </List>
+        <Typography fontSize={12} sx={{ mt: 4, mb: 2 }} textAlign='center'>
+          {getText({
+            en: 'Last Updated at ',
+            'zh-Hans': '最近更新于 ',
+          })}
+          {new Date().toLocaleString()}
+        </Typography>
       </Dialog>
     </div>
   );

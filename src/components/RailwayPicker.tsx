@@ -293,6 +293,15 @@ function RailwayPicker(props: Props & ReduxProps) {
             </div>
           ))}
         </List>
+        {props.railwaysDcDate ? (
+          <Typography fontSize={12} sx={{ mt: 0, mb: 2 }} textAlign='center'>
+            {getText({
+              en: 'Last Updated at ',
+              'zh-Hans': '最近更新于 ',
+            })}
+            {props.railwaysDcDate.toLocaleString()}
+          </Typography>
+        ) : null}
       </Dialog>
     </div>
   );

@@ -81,10 +81,17 @@ function AirportStatusPage(props: ReduxProps) {
           setFlights(data);
           setLoading(false);
 
+          if (data.length > 0) {
+            setTime(new Date(data[0].dcDate));
+          }
+
           intervalId = setInterval(() => {
             API.getDepartureInformation(airportCode, terminal).then((data) => {
               if (data && subscribe) {
                 setFlights(data);
+                if (data.length > 0) {
+                  setTime(new Date(data[0].dcDate));
+                }
               }
             });
           }, 2 * 60 * 1000);
@@ -95,11 +102,17 @@ function AirportStatusPage(props: ReduxProps) {
         if (data && subscribe) {
           setFlights(data);
           setLoading(false);
+          if (data.length > 0) {
+            setTime(new Date(data[0].dcDate));
+          }
 
           intervalId = setInterval(() => {
             API.getArrivalInformation(airportCode, terminal).then((data) => {
               if (data && subscribe) {
                 setFlights(data);
+                if (data.length > 0) {
+                  setTime(new Date(data[0].dcDate));
+                }
               }
             });
           }, 2 * 60 * 1000);
@@ -110,13 +123,15 @@ function AirportStatusPage(props: ReduxProps) {
     return () => {
       subscribe = false;
       if (intervalId) {
-        clearInterval(intervalId)
+        clearInterval(intervalId);
       }
     };
   }, [airportCode, direction, terminal]);
 
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+
+  const [time, setTime] = useState<Date>();
 
   const getText = (o?: MultiLangObject | null) => {
     if (o) {
@@ -136,6 +151,7 @@ function AirportStatusPage(props: ReduxProps) {
         setFlights([]);
         setLoading(true);
         setDirection(tabs[index].match);
+        setTime(undefined);
       }}
       title={{ en: 'Search by Airport', 'zh-Hans': '以机场搜索' }}
       prevIcon={<ChevronLeftIcon />}
@@ -404,6 +420,12 @@ function AirportStatusPage(props: ReduxProps) {
                 );
               })}
         </List>
+        {time ? (
+          <Typography fontSize={12} sx={{ mt: 2, mb: 4, px: 2 }}>
+            {getText({ en: 'Last Updated at ', 'zh-Hans': '最近更新于 ' })}
+            {time.toLocaleString()}
+          </Typography>
+        ) : null}
       </Container>
     </AppFrame>
   );

@@ -7,6 +7,8 @@ interface State {
   secondaryLang: string;
   stations: StationItem[];
   railways: RailwayItem[];
+  stationsDcDate: Date;
+  railwaysDcDate: Date;
 }
 
 interface Action {
@@ -44,6 +46,8 @@ const langReducer: Reducer<State, Action> = function (
     secondaryLang: 'en',
     stations: [],
     railways: [],
+    stationsDcDate: new Date(),
+    railwaysDcDate: new Date(),
   },
   action: Action
 ) {
@@ -62,11 +66,13 @@ const langReducer: Reducer<State, Action> = function (
       return {
         ...state,
         stations: [...action.payload],
+        stationsDcDate: new Date(),
       };
     case 'SET_RAILWAYS':
       return {
         ...state,
         railways: [...action.payload],
+        railwaysDcDate: new Date(),
       };
     default:
       return state;
@@ -110,4 +116,6 @@ export interface ReduxProps {
   secondaryLang: string;
   stations: StationItem[];
   railways: RailwayItem[];
+  stationsDcDate: Date;
+  railwaysDcDate: Date;
 }

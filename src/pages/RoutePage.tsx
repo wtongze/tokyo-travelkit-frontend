@@ -38,6 +38,8 @@ function RoutePage(props: ReduxProps) {
     }
   };
 
+  const [time, setTime] = useState<Date>();
+
   useEffect(() => {
     let subscribe = true;
 
@@ -72,6 +74,7 @@ function RoutePage(props: ReduxProps) {
       ).then((data) => {
         if (data && subscribe) {
           setRoute(data);
+          setTime(new Date());
 
           let total: boolean[][] = [];
           for (let i = 0; i < data.directions.length; i++) {
@@ -704,6 +707,15 @@ function RoutePage(props: ReduxProps) {
               }}
             />
           )}
+          {time ? (
+            <Typography fontSize={12} sx={{ mt: 6 }}>
+              {getText({
+                en: 'Last Updated at ',
+                'zh-Hans': '最近更新于 ',
+              })}
+              {time.toLocaleString()}
+            </Typography>
+          ) : null}
         </Container>
       </AppFrame>
     </div>

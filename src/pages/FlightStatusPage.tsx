@@ -35,6 +35,7 @@ function FlightStatusPage(props: ReduxProps) {
   >();
 
   const [loading, setLoading] = useState(true);
+  const [time, setTime] = useState<Date>();
 
   useEffect(() => {
     let subscribe = true;
@@ -46,10 +47,12 @@ function FlightStatusPage(props: ReduxProps) {
           if (data && subscribe) {
             setFlightInfo(data);
             setLoading(false);
+            setTime(new Date());
             intervalId = setInterval(() => {
               API.getDepartureFlightInformation(flightId).then((data) => {
                 if (data && subscribe) {
                   setFlightInfo(data);
+                  setTime(new Date());
                 }
               });
             }, 2 * 60 * 1000);
@@ -60,10 +63,12 @@ function FlightStatusPage(props: ReduxProps) {
           if (data && subscribe) {
             setFlightInfo(data);
             setLoading(false);
+            setTime(new Date(data.dcDate));
             intervalId = setInterval(() => {
               API.getArrivalFlightInformation(flightId).then((data) => {
                 if (data && subscribe) {
                   setFlightInfo(data);
+                  setTime(new Date(data.dcDate));
                 }
               });
             }, 2 * 60 * 1000);
@@ -363,6 +368,12 @@ function FlightStatusPage(props: ReduxProps) {
             </CardContent>
           ) : null}
         </Card>
+        {time ? (
+          <Typography fontSize={12} sx={{ mt: 2 }}>
+            {getText({ en: 'Last Updated at ', 'zh-Hans': '最近更新于 ' })}
+            {time.toLocaleString()}
+          </Typography>
+        ) : null}
       </Container>
     </AppFrame>
   );
