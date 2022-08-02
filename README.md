@@ -9,7 +9,7 @@ Backend Codebase:
 
 
 ## Note
-> The code submitted to the organizer of 4th Open Data Challenge for Public Transportation in Tokyo is in the `Release` section.
+> The code submitted to the organizer of 4th Open Data Challenge for Public Transportation in Tokyo is in the [`Releases`](https://github.com/wtongze/tokyo-travelkit-frontend/releases) section.
 
 ## Set up
 ```
